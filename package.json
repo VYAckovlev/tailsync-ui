@@ -1,0 +1,14 @@
+{
+    "name": "tailsync-ui",
+    "version": "0.1.0",
+    "description": "TailSync frontend service",
+    "type": "module",
+    "scripts": {
+        "start": "node index.ui.js",
+        "dev": "NODE_ENV=development node index.ui.js"
+    },
+    "dependencies": {
+        "cookie-parser": "^1.4.6",
+        "express": "^4.19.2"
+    }
+}
