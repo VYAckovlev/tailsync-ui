@@ -1,28 +1,10 @@
-# tailsync-ui
-frontend for tailsync-api
-[Intro]
-Yeah, what is this Diddy blud doing on the calculator, is blud Einstein?
-What is this Diddy blud doing on the calculator, is blud Epstein?
+# TailSync UI
 
-[Verse 1]
-What is blud doing with those numbers?
-Is he Tung Tung Sahur? Or is he a sus womens?
-Or an anti-furry making based dark memes
-Wait, I think I know what he’s typing now, wait
-Six seven? (Woo)
+TailSync’s frontend is now a Vite + React application that delivers the authentication shell for the Chronos calendar platform.
 
-[Chorus]
-What is this Diddy blud doing on the calculator, is blud Einstein?
-What is this Diddy blud doing on the calculator, is blud Epstein?
+## Stack
 
-[Bridge]
-I think this Diddy blud is Epstein (Ah)
-I think this Diddy blud is Einstein
-I think we are gonna turn him into Khaby Lame mechanism
-What is this Diddy blud doing? (Woo)
+- React 18 (functional components + hooks)
+- Vite 5 (development server & build pipeline)
+- Vanilla CSS (Google HTML/CSS style guide inspired)
 
-[Chorus]
-What is this Diddy blud doing on the calculator, is blud Einstein?
-What is this Diddy blud doing on the calculator, is blud Epstein?
-What is this Diddy blud doing on the calculator, is blud Einstein?
-What is this Diddy blud doing on the calculator, is blud Epstein?

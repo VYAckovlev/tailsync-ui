@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap");
+
 :root {
     --tailsync-blue: #081733;
     --tailsync-blue-dark: #030d21;
@@ -149,7 +151,7 @@ a:hover {
 .auth-form {
     display: none;
     flex-direction: column;
-    gap: 0.5px;
+    gap: 4px;
     animation: fadeIn var(--transition-fast) ease;
 }
 
@@ -197,7 +199,7 @@ a:hover {
 }
 
 .field-error {
-    min-height: 12px;
+    min-height: 18px;
     font-size: 0.85rem;
     color: #ffb4a2;
     letter-spacing: 0.03em;
