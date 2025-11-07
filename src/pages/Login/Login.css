@@ -1,0 +1,22 @@
+/* Login page styles */
+.auth-layout {
+    width: min(1100px, 92vw);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 32px;
+    padding: 40px;
+    align-items: stretch;
+}
+
+@media (max-width: 980px) {
+    .auth-layout {
+        padding: 32px 24px;
+    }
+}
+
+@media (max-width: 720px) {
+    .auth-layout {
+        margin-block: 32px;
+        gap: 20px;
+    }
+}
