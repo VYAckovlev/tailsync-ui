@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 import AuthForm from '../../components/AuthForm/AuthForm';
 import Pitch from '../../components/Pitch/Pitch';
 import Background from '../../shared/background/background';
@@ -23,7 +23,7 @@ const loginFields = [
 const Login = () => {
     const { login, loading } = useAuth();
     const onSubmit = async (data) => {
-        const result = await login(data.email, data.password);
+        const result = await login(data);
         if (!result.success) {
         throw new Error(result.error);
         }

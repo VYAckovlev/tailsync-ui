@@ -1,5 +1,5 @@
 export const authService = {
-    setToken (accessToken) {
+    setToken(accessToken) {
         localStorage.setItem('token', accessToken);
     },
 
@@ -14,4 +14,4 @@ export const authService = {
     isAuthenticated() {
         return !!this.getToken();
     }
-}
+};

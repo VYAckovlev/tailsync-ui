@@ -39,3 +39,9 @@
         min-height: 220px;
     }
 }
+
+@media (max-width: 720px) {
+    .pitch-panel {
+        display: none;
+    }
+}
