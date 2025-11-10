@@ -3,6 +3,18 @@ import { authService } from '../utils/AuthService';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
+let isRefreshing = false;
+let refreshSubscribers = [];
+
+const subscribeTokenRefresh = (callback) => {
+    refreshSubscribers.push(callback);
+};
+
+const onTokenRefreshed = (token) => {
+    refreshSubscribers.forEach((callback) => callback(token));
+    refreshSubscribers = [];
+};
+
 export const apiClient = axios.create({
     baseURL: API_BASE_URL,
     headers: {
@@ -33,6 +45,17 @@ apiClient.interceptors.response.use(
         if (error.response?.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
 
+            if (isRefreshing) {
+                return new Promise((resolve) => {
+                    subscribeTokenRefresh((token) => {
+                        originalRequest.headers.Authorization = `Bearer ${token}`;
+                        resolve(apiClient(originalRequest));
+                    });
+                });
+            }
+
+            isRefreshing = true;
+
             try {
                 const response = await axios.post(
                     `${API_BASE_URL}/auth/refresh`,
@@ -43,10 +66,14 @@ apiClient.interceptors.response.use(
                 const { access_token } = response.data.data;
 
                 authService.setToken(access_token);
+                onTokenRefreshed(access_token);
+                isRefreshing = false;
 
                 originalRequest.headers.Authorization = `Bearer ${access_token}`;
                 return apiClient(originalRequest);
             } catch (refreshError) {
+                isRefreshing = false;
+                refreshSubscribers = [];
                 authService.clearAuth();
                 window.dispatchEvent(new CustomEvent('auth:logout'));
 

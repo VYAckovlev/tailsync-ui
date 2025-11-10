@@ -11,9 +11,11 @@ export const AuthProvider = ({ children }) => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        const checkAuth = () => {
+        const checkAuth = async () => {
             try {
                 if (authService.isAuthenticated()) {
+                    const userData = await authApi.fetchCurrentUser();
+                    setUser(userData);
                     setIsAuthenticated(true);
                 }
             } catch (err) {
@@ -27,6 +29,17 @@ export const AuthProvider = ({ children }) => {
         checkAuth();
     }, []);
 
+    useEffect(() => {
+        const handleAuthLogout = () => {
+            setUser(null);
+            setIsAuthenticated(false);
+            setError(null);
+        };
+
+        window.addEventListener('auth:logout', handleAuthLogout);
+        return () => window.removeEventListener('auth:logout', handleAuthLogout);
+    }, []);
+
     const login = async (credentials) => {
         setError(null);
         setLoading(true);
@@ -35,7 +48,8 @@ export const AuthProvider = ({ children }) => {
             const { access_token } = await authApi.login(credentials);
             authService.setToken(access_token);
 
-            setUser({ email: credentials.email });
+            const userData = await authApi.fetchCurrentUser();
+            setUser(userData);
             setIsAuthenticated(true);
 
             return { success: true };
@@ -75,6 +89,21 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const requestPasswordReset = async (email) => {
+        setError(null);
+        setLoading(true);
+
+        try {
+            const response = await authApi.requestPasswordReset(email);
+            return { success: true, message: response.message };
+        } catch (err) {
+            setError(err.message);
+            return { success: false, error: err.message };
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const value = {
         user,
         isAuthenticated,
@@ -83,7 +112,7 @@ export const AuthProvider = ({ children }) => {
         login,
         register,
         logout,
-        setError
+        requestPasswordReset
     };
 
     return (

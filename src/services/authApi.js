@@ -4,7 +4,9 @@ const AUTH_ENDPOINTS = {
     LOGIN: '/auth/login',
     REGISTER: '/auth/register',
     LOGOUT: '/auth/logout',
-    REFRESH: '/auth/refresh'
+    REFRESH: '/auth/refresh',
+    ME: '/auth/me',
+    PASSWORD_RESET: '/auth/password-reset'
 };
 
 export const authApi = {
@@ -36,5 +38,15 @@ export const authApi = {
     async refreshToken() {
         const response = await apiClient.post(AUTH_ENDPOINTS.REFRESH);
         return response.data.data;
+    },
+
+    async fetchCurrentUser() {
+        const response = await apiClient.get(AUTH_ENDPOINTS.ME);
+        return response.data.data;
+    },
+
+    async requestPasswordReset(email) {
+        const response = await apiClient.post(AUTH_ENDPOINTS.PASSWORD_RESET, { email });
+        return response.data;
     }
 };

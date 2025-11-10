@@ -30,7 +30,9 @@ const AuthForm = ({
         e.preventDefault();
         e.stopPropagation();
 
-        Promise.resolve(onSubmit(formData)).catch(err => {});
+        Promise.resolve(onSubmit(formData)).catch(err => {
+            console.error('Form submission error:', err);
+        });
         return false
     }
     return (

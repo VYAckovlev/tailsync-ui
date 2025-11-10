@@ -4,11 +4,25 @@ import { AuthProvider } from './context/AuthContext';
 import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
 import PasswordReset from './pages/PasswordReset/PasswordReset';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
     return (
         <BrowserRouter>
             <AuthProvider>
+                <Toaster
+                    position="top-right"
+                    toastOptions={{
+                        duration: 4000,
+                        style: {
+                            background: '#1a2244',
+                            color: '#fff',
+                            borderRadius: '8px',
+                            fontSize: '14px',
+                            border: '1px solid rgba(255,255,255,0.1)',
+                        },
+                    }}
+                />
                 <Routes>
                     <Route path="/" element={<Navigate to="/login" replace />} />
                     <Route path="/login" element={<Login />} />
