@@ -4,6 +4,7 @@ import AuthForm from '../../components/AuthForm/AuthForm';
 import Pitch from '../../components/Pitch/Pitch';
 import Background from '../../shared/background/background';
 import './Register.css';
+import toast from "react-hot-toast";
 
 const registerFields = [
   {
@@ -36,14 +37,19 @@ const Register = () => {
   const { register, loading } = useAuth();
 
   const onSubmit = async (data) => {
-    if (data.password !== data.confirmPassword) {
-      throw new Error('Passwords do not match');
-    }
-
-    const result = await register(data.name, data.email, data.password);
-    if (!result.success) {
-      throw new Error(result.error);
-    }
+      if (data.password !== data.confirmPassword) {
+          toast.error('Passwords do not match');
+          return;
+      }
+      try {
+          const result = await register(data);
+          if (!result.success) {
+              throw new Error(result.error);
+          }
+          toast.success("Account created successfully!");
+      } catch (err) {
+          toast.error(err.message);
+      }
   };
 
   return (

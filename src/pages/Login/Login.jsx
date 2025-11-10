@@ -4,6 +4,7 @@ import AuthForm from '../../components/AuthForm/AuthForm';
 import Pitch from '../../components/Pitch/Pitch';
 import Background from '../../shared/background/background';
 import './Login.css';
+import toast from "react-hot-toast";
 
 const loginFields = [
     {
@@ -23,9 +24,14 @@ const loginFields = [
 const Login = () => {
     const { login, loading } = useAuth();
     const onSubmit = async (data) => {
-        const result = await login(data);
-        if (!result.success) {
-        throw new Error(result.error);
+        try {
+            const result = await login(data);
+            if (!result.success) {
+                throw new Error(result.error);
+            }
+            toast.success("Welcome back!");
+        } catch (err) {
+            toast.error(err.message);
         }
     };
 
