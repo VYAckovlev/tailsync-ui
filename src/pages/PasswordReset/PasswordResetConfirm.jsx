@@ -2,9 +2,6 @@ import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import AuthForm from '../../components/AuthForm/AuthForm';
-import Pitch from '../../components/Pitch/Pitch';
-import Background from '../../shared/background/background';
-import './PasswordReset.css';
 import toast from "react-hot-toast";
 
 const passwordResetFields = [
@@ -55,16 +52,11 @@ const PasswordResetConfirm = () => {
     };
 
     return (
-        <Background>
-            <div className="auth-layout">
-                <AuthForm
-                    fields={passwordResetFields}
-                    onSubmit={onSubmit}
-                    submitButtonText={loading ? "Sending..." : "Change Password"}
-                />
-                <Pitch />
-            </div>
-        </Background>
+        <AuthForm
+            fields={passwordResetFields}
+            onSubmit={onSubmit}
+            submitButtonText={loading ? "Sending..." : "Change Password"}
+        />
     );
 };
 

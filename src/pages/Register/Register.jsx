@@ -1,10 +1,8 @@
 import React from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import AuthForm from '../../components/AuthForm/AuthForm';
-import Pitch from '../../components/Pitch/Pitch';
-import Background from '../../shared/background/background';
-import './Register.css';
 import toast from "react-hot-toast";
+import './Register.css';
 
 const registerFields = [
   {
@@ -53,21 +51,16 @@ const Register = () => {
   };
 
   return (
-    <Background>
-      <div className="auth-layout">
-        <AuthForm
-          fields={registerFields}
-          onSubmit={onSubmit}
-          submitButtonText={loading ? "Creating account..." : "Register"}
-          switchLink={{
-            text: "Already have an account?",
-            linkText: "Sign in",
-            to: "/login"
-          }}
-        />
-        <Pitch />
-      </div>
-    </Background>
+    <AuthForm
+      fields={registerFields}
+      onSubmit={onSubmit}
+      submitButtonText={loading ? "Creating account..." : "Register"}
+      switchLink={{
+        text: "Already have an account?",
+        linkText: "Sign in",
+        to: "/auth/login"
+      }}
+    />
   );
 };
 
