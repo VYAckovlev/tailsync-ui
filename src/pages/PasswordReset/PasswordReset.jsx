@@ -2,7 +2,6 @@ import React from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import AuthForm from '../../components/AuthForm/AuthForm';
 import toast from "react-hot-toast";
-import './PasswordReset.css';
 
 const passwordResetFields = [
     {

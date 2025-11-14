@@ -2,6 +2,7 @@ import { Outlet } from 'react-router-dom';
 import Background from '../shared/background/background';
 import Logo from '../shared/logo/logo';
 import Pitch from '../components/Pitch/Pitch';
+import './AuthLayout.css';
 
 const AuthLayout = () => {
     return (
