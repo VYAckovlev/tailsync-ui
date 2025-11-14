@@ -104,6 +104,21 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const confirmPasswordReset = async (token, password) => {
+        setError(null);
+        setLoading(true);
+
+        try {
+            const response = await authApi.confirmPasswordReset(token, password);
+            return { success: true, message: response.message };
+        } catch (err) {
+            setError(err.message);
+            return { success: false, error: err.message };
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const value = {
         user,
         isAuthenticated,
@@ -112,7 +127,8 @@ export const AuthProvider = ({ children }) => {
         login,
         register,
         logout,
-        requestPasswordReset
+        requestPasswordReset,
+        confirmPasswordReset
     };
 
     return (

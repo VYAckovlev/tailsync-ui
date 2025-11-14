@@ -48,5 +48,10 @@ export const authApi = {
     async requestPasswordReset(email) {
         const response = await apiClient.post(AUTH_ENDPOINTS.PASSWORD_RESET, { email });
         return response.data;
+    },
+
+    async confirmPasswordReset(token, password) {
+        const response = await apiClient.post(`${AUTH_ENDPOINTS.PASSWORD_RESET}/${token}`, { password });
+        return response.data;
     }
 };

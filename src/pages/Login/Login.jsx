@@ -1,9 +1,6 @@
 import React from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import AuthForm from '../../components/AuthForm/AuthForm';
-import Pitch from '../../components/Pitch/Pitch';
-import Background from '../../shared/background/background';
-import './Login.css';
 import toast from "react-hot-toast";
 
 const loginFields = [
@@ -36,22 +33,17 @@ const Login = () => {
     };
 
     return (
-        <Background>
-            <div className="auth-layout">
-                <AuthForm
-                    fields={loginFields}
-                    onSubmit={onSubmit}
-                    submitButtonText={loading ? "Logging in..." : "Login"}
-                    showForgotPassword={true}
-                    switchLink={{
-                        text: "Don't have an account?",
-                        linkText: "Sign up",
-                        to: "/register"
-                    }}
-                />
-                <Pitch />
-          </div>
-        </Background>
+        <AuthForm
+            fields={loginFields}
+            onSubmit={onSubmit}
+            submitButtonText={loading ? "Logging in..." : "Login"}
+            showForgotPassword={true}
+            switchLink={{
+                text: "Don't have an account?",
+                linkText: "Sign up",
+                to: "/auth/register"
+            }}
+        />
     );
 };
 

@@ -1,9 +1,11 @@
 import './App.css'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import AuthLayout from './layouts/AuthLayout';
 import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
 import PasswordReset from './pages/PasswordReset/PasswordReset';
+import PasswordResetConfirm from './pages/PasswordReset/PasswordResetConfirm';
 import { Toaster } from 'react-hot-toast';
 
 function App() {
@@ -24,11 +26,14 @@ function App() {
                     }}
                 />
                 <Routes>
-                    <Route path="/" element={<Navigate to="/login" replace />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/register" element={<Register />} />
-                    <Route path="/password-reset" element={<PasswordReset />} />
-                    <Route path="*" element={<Navigate to="/login" replace />} />
+                    <Route path="/" element={<Navigate to="/auth/login" replace />} />
+                    <Route path="/auth" element={<AuthLayout />}>
+                        <Route path="login" element={<Login />} />
+                        <Route path="register" element={<Register />} />
+                        <Route path="password-reset" element={<PasswordReset />} />
+                        <Route path="password-reset/:token" element={<PasswordResetConfirm />} />
+                    </Route>
+                    <Route path="*" element={<Navigate to="/auth/login" replace />} />
                 </Routes>
             </AuthProvider>
         </BrowserRouter>
