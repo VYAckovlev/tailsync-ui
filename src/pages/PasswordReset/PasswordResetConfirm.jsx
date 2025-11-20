@@ -3,21 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import AuthForm from '../../components/AuthForm/AuthForm';
 import toast from "react-hot-toast";
-
-const passwordResetFields = [
-    {
-        name: 'password',
-        type: 'password',
-        label: 'New Password',
-        placeholder: 'Enter your new password'
-    },
-    {
-        name: 'confirmPassword',
-        type: 'password',
-        label: 'Confirm Password',
-        placeholder: 'Confirm your new password'
-    }
-];
+import { passwordResetConfirmConfig, formValidators } from '../../shared/constants/form';
 
 const PasswordResetConfirm = () => {
     const { token } = useParams();
@@ -26,8 +12,9 @@ const PasswordResetConfirm = () => {
 
     const onSubmit = async (data) => {
         try {
-            if (data.password !== data.confirmPassword) {
-                toast.error("Passwords do not match");
+            const validation = formValidators.validatePasswordMatch(data.password, data.confirm_password);
+            if (!validation.isValid) {
+                toast.error(validation.error);
                 return;
             }
 
@@ -53,9 +40,9 @@ const PasswordResetConfirm = () => {
 
     return (
         <AuthForm
-            fields={passwordResetFields}
+            fields={passwordResetConfirmConfig.fields}
             onSubmit={onSubmit}
-            submitButtonText={loading ? "Sending..." : "Change Password"}
+            submitButtonText={loading ? passwordResetConfirmConfig.loadingText : passwordResetConfirmConfig.submitButtonText}
         />
     );
 };

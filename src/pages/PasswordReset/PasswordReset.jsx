@@ -2,15 +2,7 @@ import React from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import AuthForm from '../../components/AuthForm/AuthForm';
 import toast from "react-hot-toast";
-
-const passwordResetFields = [
-    {
-        name: 'email',
-        type: 'email',
-        label: 'Email',
-        placeholder: 'Enter your email address'
-    }
-];
+import { passwordResetConfig } from '../../shared/constants/form';
 
 const PasswordReset = () => {
     const { requestPasswordReset, loading } = useAuth();
@@ -29,9 +21,9 @@ const PasswordReset = () => {
 
     return (
         <AuthForm
-            fields={passwordResetFields}
+            fields={passwordResetConfig.fields}
             onSubmit={onSubmit}
-            submitButtonText={loading ? "Sending..." : "Reset Password"}
+            submitButtonText={loading ? passwordResetConfig.loadingText : passwordResetConfig.submitButtonText}
         />
     );
 };

@@ -1,21 +1,24 @@
 import './App.css'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
-import AuthLayout from './layouts/AuthLayout';
+import { UserProvider } from './context/UserContext';
+import AuthLayout from './layouts/Auth/AuthLayout.jsx';
 import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
 import PasswordReset from './pages/PasswordReset/PasswordReset';
 import PasswordResetConfirm from './pages/PasswordReset/PasswordResetConfirm';
 import { Toaster } from 'react-hot-toast';
+import MainLayout from "./layouts/Main/MainLayout.jsx";
 
 function App() {
     return (
         <BrowserRouter>
             <AuthProvider>
+                <UserProvider>
                 <Toaster
                     position="top-right"
                     toastOptions={{
-                        duration: 4000,
+                        duration: 2500,
                         style: {
                             background: '#1a2244',
                             color: '#fff',
@@ -34,7 +37,12 @@ function App() {
                         <Route path="password-reset/:token" element={<PasswordResetConfirm />} />
                     </Route>
                     <Route path="*" element={<Navigate to="/auth/login" replace />} />
+                    <Route path="/tailsync" element={<MainLayout/>}>
+                        {/*<Route index element={<Calendar/>} />*/}
+                        {/*<Route path="calendar" element={<Calendar/>}></Route>*/}
+                    </Route>
                 </Routes>
+                </UserProvider>
             </AuthProvider>
         </BrowserRouter>
     )

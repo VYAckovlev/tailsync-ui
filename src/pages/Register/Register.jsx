@@ -2,40 +2,15 @@ import React from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import AuthForm from '../../components/AuthForm/AuthForm';
 import toast from "react-hot-toast";
-
-const registerFields = [
-  {
-    name: 'name',
-    type: 'text',
-    label: 'Name',
-    placeholder: 'Enter your full name'
-  },
-  {
-    name: 'email',
-    type: 'email',
-    label: 'Email',
-    placeholder: 'Enter your email'
-  },
-  {
-    name: 'password',
-    type: 'password',
-    label: 'Password',
-    placeholder: 'Enter your password'
-  },
-  {
-    name: 'confirmPassword',
-    type: 'password',
-    label: 'Confirm Password',
-    placeholder: 'Confirm your password'
-  }
-];
+import { registerConfig, formValidators } from '../../shared/constants/form';
 
 const Register = () => {
   const { register, loading } = useAuth();
 
   const onSubmit = async (data) => {
-      if (data.password !== data.confirmPassword) {
-          toast.error('Passwords do not match');
+      const validation = formValidators.validatePasswordMatch(data.password, data.confirm_password);
+      if (!validation.isValid) {
+          toast.error(validation.error);
           return;
       }
       try {
@@ -51,9 +26,9 @@ const Register = () => {
 
   return (
     <AuthForm
-      fields={registerFields}
+      fields={registerConfig.fields}
       onSubmit={onSubmit}
-      submitButtonText={loading ? "Creating account..." : "Register"}
+      submitButtonText={loading ? registerConfig.loadingText : registerConfig.submitButtonText}
       switchLink={{
         text: "Already have an account?",
         linkText: "Sign in",
