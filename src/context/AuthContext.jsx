@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
             try {
                 if (authService.isAuthenticated()) {
                     const userData = await authApi.fetchCurrentUser();
-                    setUser(userData);
+                    setUser(userData.me);
                     setIsAuthenticated(true);
                 }
             } catch (err) {
@@ -49,9 +49,8 @@ export const AuthProvider = ({ children }) => {
             authService.setToken(access_token);
 
             const userData = await authApi.fetchCurrentUser();
-            setUser(userData);
+            setUser(userData.me);
             setIsAuthenticated(true);
-
             return { success: true };
         } catch (err) {
             setError(err.message);
@@ -121,6 +120,7 @@ export const AuthProvider = ({ children }) => {
 
     const value = {
         user,
+        setUser,
         isAuthenticated,
         loading,
         error,
