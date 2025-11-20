@@ -1,4 +1,3 @@
-/* Logo component styles */
 .logo-circle {
     position: relative;
     background: radial-gradient(circle at 35% 35%, #1c4fa3 0%, #112860 65%, var(--tailsync-blue) 100%);
@@ -11,7 +10,6 @@
     flex-shrink: 0;
 }
 
-/* Logo sizes */
 .logo-circle--small {
     width: 50px;
     height: 50px;
@@ -19,8 +17,8 @@
 }
 
 .logo-circle--medium {
-    width: 86px;
-    height: 86px;
+    width: 65px;
+    height: 65px;
     border-width: 6px;
 }
 

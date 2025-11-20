@@ -2,23 +2,11 @@ import React from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import AuthForm from '../../components/AuthForm/AuthForm';
 import toast from "react-hot-toast";
-
-const loginFields = [
-    {
-        name: 'email',
-        type: 'email',
-        label: 'Email',
-        placeholder: 'Enter your email'
-    },
-    {
-        name: 'password',
-        type: 'password',
-        label: 'Password',
-        placeholder: 'Enter your password'
-    }
-];
+import {useNavigate} from "react-router-dom";
+import { loginConfig } from '../../shared/constants/form';
 
 const Login = () => {
+    const navigate = useNavigate();
     const { login, loading } = useAuth();
     const onSubmit = async (data) => {
         try {
@@ -26,6 +14,7 @@ const Login = () => {
             if (!result.success) {
                 throw new Error(result.error);
             }
+            navigate('/tailsync');
             toast.success("Welcome back!");
         } catch (err) {
             toast.error(err.message);
@@ -34,9 +23,9 @@ const Login = () => {
 
     return (
         <AuthForm
-            fields={loginFields}
+            fields={loginConfig.fields}
             onSubmit={onSubmit}
-            submitButtonText={loading ? "Logging in..." : "Login"}
+            submitButtonText={loading ? loginConfig.loadingText : loginConfig.submitButtonText}
             showForgotPassword={true}
             switchLink={{
                 text: "Don't have an account?",
