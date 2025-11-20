@@ -1,39 +1,16 @@
-import {useState} from 'react';
 import { Link } from 'react-router-dom';
+import useForm from '../../hooks/useForm';
 import './AuthForm.css';
 
 const AuthForm = ({
-  fields,
-  onSubmit,
-  submitButtonText,
-  showForgotPassword = false,
-  switchLink = null
-}) => {
+                      fields,
+                      onSubmit,
+                      submitButtonText,
+                      showForgotPassword = false,
+                      switchLink = null
+                  }) => {
 
-    const initFormState = fields.reduce((acc, field) => {
-        acc[field.name] = "";
-        return acc;
-    }, {});
-
-    const [formData, setFormData] = useState(initFormState);
-
-    const handleChange = (e) => {
-        const {name, value } = e.target;
-        setFormData(prevData => ({
-            ...prevData,
-            [name]: value
-        }));
-    }
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-
-        Promise.resolve(onSubmit(formData)).catch(err => {
-            console.error('Form submission error:', err);
-        });
-        return false
-    }
+    const { formData, handleChange, handleSubmit } = useForm(fields, onSubmit);
 
     return (
         <div className="auth-card">
