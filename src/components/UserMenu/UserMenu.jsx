@@ -7,12 +7,14 @@ import EditIcon from "../../shared/icons/Edit.icon.jsx";
 import LockIcon from "../../shared/icons/Lock.icon.jsx";
 import ChangeNameModal from "./ChangeNameModal.jsx";
 import ChangePasswordModal from "./ChangePasswordModal.jsx";
+import ChangeAvatarModal from "./ChangeAvatarModal.jsx";
 
 const UserMenu = ({user, onLogout}) => {
     const [isOpen, setIsOpen] = useState(false);
     const [avatarError, setAvatarError] = useState(false);
     const [isNameModalOpen, setIsNameModalOpen] = useState(false);
     const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+    const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
     const menuRef = useRef(null);
     const navigate = useNavigate();
 
@@ -33,6 +35,11 @@ const UserMenu = ({user, onLogout}) => {
     const handleOpenPasswordModal = () => {
         setIsOpen(false);
         setIsPasswordModalOpen(true);
+    };
+
+    const handleOpenAvatarModal = () => {
+        setIsOpen(false);
+        setIsAvatarModalOpen(true);
     };
 
     const handleAvatarError = () => {
@@ -58,7 +65,7 @@ const UserMenu = ({user, onLogout}) => {
 
             <div className={`dropdown-menu ${isOpen ? 'open' : ''}`}>
                 <div className="dropdown-user-info">
-                    <div className="dropdown-avatar">
+                    <div className="dropdown-avatar" onClick={handleOpenAvatarModal} style={{ cursor: 'pointer' }}>
                         {hasAvatar ? (
                             <img
                                 src={user.avatar}
@@ -100,6 +107,10 @@ const UserMenu = ({user, onLogout}) => {
             <ChangePasswordModal
                 isOpen={isPasswordModalOpen}
                 onClose={() => setIsPasswordModalOpen(false)}
+            />
+            <ChangeAvatarModal
+                isOpen={isAvatarModalOpen}
+                onClose={() => setIsAvatarModalOpen(false)}
             />
         </div>
     );
