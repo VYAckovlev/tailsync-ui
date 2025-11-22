@@ -44,11 +44,27 @@ export const UserProvider = ({ children }) => {
         }
     };
 
+    const updateAvatar = async (avatar) => {
+        setError(null);
+        setLoading(true);
+
+        try {
+            const response = await userApi.updateAvatar(avatar);
+            return { success: true, message: response.message };
+        } catch (err) {
+            setError(err.message);
+            return { success: false, error: err.message };
+        } finally {
+            setLoading(false);
+        }
+    }
+
     const value = {
         loading,
         error,
         updateName,
-        updatePassword
+        updatePassword,
+        updateAvatar
     };
 
     return (

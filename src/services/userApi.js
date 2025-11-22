@@ -2,7 +2,8 @@ import { apiClient } from './api';
 
 const USER_ENDPOINTS = {
     NAME_CHANGE: '/user/name-change',
-    PASSWORD_CHANGE: '/user/password-change'
+    PASSWORD_CHANGE: '/user/password-change',
+    AVATAR_CHANE: '/user/avatar-change'
 };
 
 export const userApi = {
@@ -16,6 +17,11 @@ export const userApi = {
             old_password,
             new_password
         });
+        return response.data;
+    },
+
+    async updateAvatar(avatar) {
+        const response = await apiClient.patch(USER_ENDPOINTS.AVATAR_CHANE, { avatar });
         return response.data;
     }
 };
