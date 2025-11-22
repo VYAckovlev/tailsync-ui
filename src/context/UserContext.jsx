@@ -50,6 +50,11 @@ export const UserProvider = ({ children }) => {
 
         try {
             const response = await userApi.updateAvatar(avatar);
+
+            if (setUser && response.avatar) {
+                setUser(prevUser => ({ ...prevUser, avatar: response.avatar }));
+            }
+
             return { success: true, message: response.message };
         } catch (err) {
             setError(err.message);
