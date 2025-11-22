@@ -16,7 +16,6 @@ export const UserProvider = ({ children }) => {
         try {
             const response = await userApi.updateName(name);
 
-            // Update user state in AuthContext
             if (setUser) {
                 setUser(prevUser => ({ ...prevUser, name }));
             }
@@ -45,11 +44,32 @@ export const UserProvider = ({ children }) => {
         }
     };
 
+    const updateAvatar = async (avatar) => {
+        setError(null);
+        setLoading(true);
+
+        try {
+            const response = await userApi.updateAvatar(avatar);
+
+            if (setUser && response.avatar) {
+                setUser(prevUser => ({ ...prevUser, avatar: response.avatar }));
+            }
+
+            return { success: true, message: response.message };
+        } catch (err) {
+            setError(err.message);
+            return { success: false, error: err.message };
+        } finally {
+            setLoading(false);
+        }
+    }
+
     const value = {
         loading,
         error,
         updateName,
-        updatePassword
+        updatePassword,
+        updateAvatar
     };
 
     return (

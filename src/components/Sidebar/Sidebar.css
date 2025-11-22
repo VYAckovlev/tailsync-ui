@@ -1,0 +1,191 @@
+.sidebar {
+    position: fixed;
+    top: 80px;
+    left: 0;
+    width: 280px;
+    height: calc(100vh - 80px);
+    background: rgba(8, 23, 51, 0.95);
+    backdrop-filter: blur(12px);
+    border-right: 2px solid rgba(255, 122, 24, 0.3);
+    padding: 1.5rem 1rem;
+    overflow-y: auto;
+    z-index: 500;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
+}
+
+.create-section {
+    position: relative;
+    margin-bottom: 1.5rem;
+    padding: 0 0.5rem;
+}
+
+.create-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: linear-gradient(135deg, var(--tailsync-orange-start), var(--tailsync-orange-end));
+    border: none;
+    border-radius: 24px;
+    cursor: pointer;
+    color: white;
+    box-shadow: 0 4px 12px rgba(255, 122, 24, 0.3);
+    transition: all 0.2s ease;
+}
+
+.create-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(255, 122, 24, 0.4);
+}
+
+.create-btn.active {
+    transform: scale(0.98);
+}
+
+.create-icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    padding: 4px;
+}
+
+.create-label {
+    font-family: var(--font-family-base);
+    font-weight: 600;
+    font-size: 1rem;
+    flex: 1;
+    text-align: left;
+}
+
+.create-chevron {
+    transition: transform 0.3s ease;
+}
+.create-chevron.open {
+    transform: rotate(90deg);
+}
+
+/* --- Випадаюче меню Create --- */
+.create-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0.5rem;
+    right: 0.5rem;
+    background: rgba(21, 35, 70, 0.95);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 122, 24, 0.3);
+    border-radius: 16px;
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.2s ease;
+    z-index: 100;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.create-dropdown.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.create-item {
+    padding: 0.75rem 1rem;
+    background: transparent;
+    border: none;
+    color: var(--tailsync-cream);
+    text-align: left;
+    font-family: var(--font-family-base);
+    font-size: 0.95rem;
+    cursor: pointer;
+    border-radius: 12px;
+    transition: background 0.2s ease;
+}
+
+.create-item:hover {
+    background: rgba(255, 122, 24, 0.15);
+    color: white;
+}
+
+/* --- Розділювач --- */
+.sidebar-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    margin: 1rem 0;
+}
+
+/* --- Групи календарів (My Calendars / Other) --- */
+.calendars-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    overflow-y: auto; /* Якщо календарів багато, з'явиться скрол */
+}
+
+.calendar-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.group-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0.5rem 1rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: rgba(241, 245, 255, 0.5);
+    transition: color 0.2s ease;
+}
+
+.group-header:hover {
+    color: var(--tailsync-cream);
+}
+
+.group-title {
+    font-family: var(--font-family-base);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.group-chevron {
+    transition: transform 0.3s ease;
+    opacity: 0.7;
+}
+.group-chevron.open {
+    transform: rotate(90deg);
+}
+
+.group-content {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.3s ease;
+    overflow: hidden;
+}
+
+.group-content.open {
+    grid-template-rows: 1fr;
+}
+
+/* Внутрішній контейнер для анімації висоти */
+.group-content > div {
+    min-height: 0;
+}
+
+/* Тимчасові стилі для TODO елементів */
+.todo-item {
+    padding: 0.5rem 1rem 0.5rem 2rem;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.3);
+    font-style: italic;
+}
