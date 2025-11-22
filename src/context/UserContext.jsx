@@ -16,7 +16,6 @@ export const UserProvider = ({ children }) => {
         try {
             const response = await userApi.updateName(name);
 
-            // Update user state in AuthContext
             if (setUser) {
                 setUser(prevUser => ({ ...prevUser, name }));
             }
