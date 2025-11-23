@@ -9,7 +9,7 @@ const MainLayout = () => {
         <>
             <Header />
             <Sidebar/>
-            <Background>
+            <Background centered={false}>
                 <div className="main-content">
                     <Outlet />
                 </div>

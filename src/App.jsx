@@ -9,6 +9,7 @@ import PasswordReset from './pages/PasswordReset/PasswordReset';
 import PasswordResetConfirm from './pages/PasswordReset/PasswordResetConfirm';
 import { Toaster } from 'react-hot-toast';
 import MainLayout from "./layouts/Main/MainLayout.jsx";
+import CalendarMonth from "./pages/Calendar/CalendarMonth.jsx";
 
 function App() {
     return (
@@ -38,8 +39,10 @@ function App() {
                     </Route>
                     <Route path="*" element={<Navigate to="/auth/login" replace />} />
                     <Route path="/tailsync" element={<MainLayout/>}>
-                        {/*<Route index element={<Calendar/>} />*/}
-                        {/*<Route path="calendar" element={<Calendar/>}></Route>*/}
+                        <Route index element={<Navigate to="month" replace />} />
+                        <Route path="month" element={<CalendarMonth />} />
+                        {/*<Route path="week" element={<CalendarWeek />} />*/}
+                        {/*<Route path="day" element={<CalendarDay />} />*/}
                     </Route>
                 </Routes>
                 </UserProvider>
