@@ -190,30 +190,13 @@
     border: 2px dashed var(--tailsync-orange-start);
 }
 
-/* Hide scrollbar */
 .calendar-wrapper .fc-scroller {
     overflow-y: hidden !important;
-    scrollbar-width: none; /* Firefox */
+    scrollbar-width: none;
 }
 
 .calendar-wrapper .fc-scroller::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Edge */
-}
-
-.calendar-wrapper .fc-scroller::-webkit-scrollbar-track {
-    background: var(--tailsync-blue-dark);
-    border-radius: 4px;
-}
-
-.calendar-wrapper .fc-scroller::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg,
-        var(--tailsync-orange-start),
-        var(--tailsync-orange-end));
-    border-radius: 4px;
-}
-
-.calendar-wrapper .fc-scroller::-webkit-scrollbar-thumb:hover {
-    background: var(--tailsync-orange-start);
+    display: none;
 }
 
 .calendar-wrapper .fc-theme-standard td,

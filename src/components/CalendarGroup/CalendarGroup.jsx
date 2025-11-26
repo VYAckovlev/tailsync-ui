@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import ChevronRightIcon from "../../shared/icons/ChevronRight.icon.jsx";
+import Chevron from "../../shared/icons/Chevron.icon.jsx";
 
 const CalendarGroup = ({ title, children }) => {
     const [isOpen, setIsOpen] = useState(true);
@@ -8,7 +8,7 @@ const CalendarGroup = ({ title, children }) => {
         <div className="calendar-group">
             <button className="group-header" onClick={() => setIsOpen(!isOpen)}>
                 <span className="group-title">{title}</span>
-                <ChevronRightIcon className={`group-chevron ${isOpen ? 'open' : ''}`} />
+                <Chevron.ChevronRight className={`group-chevron ${isOpen ? 'open' : ''}`} />
             </button>
             <div className={`group-content ${isOpen ? 'open' : ''}`}>
                 {children}

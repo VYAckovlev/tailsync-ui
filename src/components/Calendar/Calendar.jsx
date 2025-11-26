@@ -4,17 +4,19 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import './Calendar.css';
+import multiMonthPlugin from '@fullcalendar/multimonth';
 
-const Calendar = ({
+const Calendar = React.forwardRef(({
                       view,
                       events,
                       onDateClick,
                       onEventClick,
+                      onDatesSet,
                       extraOptions = {}
-                  }) => {
+                  }, ref) => {
 
     const defaultOptions = {
-        plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
+        plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin, multiMonthPlugin],
         headerToolbar: false,
         editable: true,
         selectable: true,
@@ -22,10 +24,13 @@ const Calendar = ({
         height: "100%",
         locale: 'en-gb',
         firstDay: 1,
+        datesSet: onDatesSet,
     };
+
     return (
         <div className="calendar-wrapper">
             <FullCalendar
+                ref={ref}
                 {...defaultOptions}
                 initialView={view}
                 events={events}
@@ -35,6 +40,8 @@ const Calendar = ({
             />
         </div>
     );
-};
+});
+
+Calendar.displayName = 'Calendar';
 
 export default Calendar;

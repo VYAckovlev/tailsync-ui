@@ -1,0 +1,47 @@
+.calendar-week-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.calendar-week-container .fc-scroller {
+    overflow-y: auto !important;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 122, 24, 0.6) var(--tailsync-blue-dark);
+}
+
+.calendar-week-container .fc-scroller::-webkit-scrollbar {
+    display: block !important;
+    width: 8px;
+}
+
+.calendar-week-container .fc-scroller::-webkit-scrollbar-track {
+    background: var(--tailsync-blue-dark);
+    border-radius: 4px;
+}
+
+.calendar-week-container .fc-scroller::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg,
+        var(--tailsync-orange-start),
+        var(--tailsync-orange-end));
+    border-radius: 4px;
+}
+
+.calendar-week-container .fc-scroller::-webkit-scrollbar-thumb:hover {
+    background: var(--tailsync-orange-start);
+}
+
+.calendar-week-container .fc-timegrid-body {
+    overflow-y: auto;
+}
+
+.calendar-week-container .fc-scroller-liquid-absolute {
+    overflow-y: auto !important;
+}
+
+.fc .fc-timegrid-slot {
+    border-bottom: 0px;
+    height: 2.5em;
+}

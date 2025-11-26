@@ -1,11 +1,20 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import ChronosCalendar from '../../components/Calendar/Calendar.jsx';
+import ChronosCalendar from '../../../components/Calendar/Calendar.jsx';
+import { useCalendar } from '../../../hooks/useCalendar.js';
 import './CalendarMonth.css';
 
 const CalendarMonth = () => {
-
+    const calendarRef = useRef(null);
+    const { setCalendarRef, setCurrentDate } = useCalendar();
     const contextData = useOutletContext();
+
+    useEffect(() => {
+        if (calendarRef.current) {
+            setCalendarRef(calendarRef.current);
+            setCurrentDate(calendarRef.current.getApi().getDate());
+        }
+    }, [setCalendarRef, setCurrentDate]);
 
     const today = new Date();
     const tomorrow = new Date(today);
@@ -39,13 +48,19 @@ const CalendarMonth = () => {
     const handleDateClick = contextData?.handleDateClick || ((arg) => alert(`Click on data: ${arg.dateStr}`));
     const handleEventClick = contextData?.handleEventClick || ((info) => alert(`Event: ${info.event.title}`));
 
+    const handleDatesSet = (dateInfo) => {
+        setCurrentDate(dateInfo.view.currentStart);
+    };
+
     return (
         <div className="calendar-month-container">
             <ChronosCalendar
+                ref={calendarRef}
                 view="dayGridMonth"
                 events={events}
                 onDateClick={handleDateClick}
                 onEventClick={handleEventClick}
+                onDatesSet={handleDatesSet}
             />
         </div>
     );
