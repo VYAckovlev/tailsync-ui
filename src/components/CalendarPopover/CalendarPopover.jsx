@@ -1,20 +1,10 @@
-import { useState, useEffect, useRef } from 'react';
-import { createPortal } from 'react-dom';
-import { useClickOutside } from '../../hooks/useClickOutside.js';
+import { useEffect, useRef } from 'react';
 import useForm from '../../hooks/useForm.js';
+import FormPopover from '../FormPopover/FormPopover.jsx';
 import './CalendarPopover.css';
-import {useDraggable} from "../../hooks/useDraggable.js";
-import CloseIcon from "../../shared/icons/Close.icon.jsx";
 
 const CalendarPopover = ({ isOpen, onClose, onSubmit, anchorPosition }) => {
-    const popoverRef = useRef(null)
-
-    const { position, isDragging, handleMouseDown } = useDraggable(
-        popoverRef,
-        anchorPosition,
-        isOpen
-    );
-;
+    const formRef = useRef(null);
 
     const fields = [
         { name: 'name', type: 'text' },
@@ -26,8 +16,8 @@ const CalendarPopover = ({ isOpen, onClose, onSubmit, anchorPosition }) => {
     });
 
     useEffect(() => {
-        if (isOpen && popoverRef.current) {
-            const inputs = popoverRef.current.querySelectorAll('input');
+        if (isOpen && formRef.current) {
+            const inputs = formRef.current.querySelectorAll('input');
             inputs.forEach(input => {
                 if (input.name === 'name') input.value = '';
                 if (input.name === 'color') input.value = '#ff7a18';
@@ -35,41 +25,15 @@ const CalendarPopover = ({ isOpen, onClose, onSubmit, anchorPosition }) => {
         }
     }, [isOpen]);
 
-    useClickOutside(popoverRef, () => {
-        if (isOpen && !isDragging) {
-            onClose();
-        }
-    });
-
-    if (!isOpen) return null;
-
-    return createPortal(
-        <div
-            ref={popoverRef}
-            className={`calendar-popover ${isDragging ? 'dragging' : ''}`}
-            style={{
-                position: 'fixed',
-                left: `${position.x}px`,
-                top: `${position.y}px`,
-                zIndex: 9999
-            }}
+    return (
+        <FormPopover
+            isOpen={isOpen}
+            onClose={onClose}
+            anchorPosition={anchorPosition}
+            title="Create Calendar"
+            className="calendar-create-popover"
         >
-            <div
-                className="popover-header"
-                onMouseDown={handleMouseDown}
-                style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
-            >
-                <h3>Create Calendar</h3>
-                <button
-                    className="popover-close"
-                    onClick={onClose}
-                    type="button"
-                >
-                    <CloseIcon />
-                </button>
-            </div>
-
-            <form className="popover-body" onSubmit={handleSubmit}>
+            <form ref={formRef} onSubmit={handleSubmit} className="calendar-form">
                 <div className="form-field">
                     <label htmlFor="calendar-name">Calendar Name</label>
                     <input
@@ -84,17 +48,17 @@ const CalendarPopover = ({ isOpen, onClose, onSubmit, anchorPosition }) => {
                     />
                 </div>
 
-                <div className="form-field">
-                    <label htmlFor="calendar-color">Calendar Color</label>
-                    <div className="color-picker-wrapper">
-                        <input
-                            type="color"
-                            id="calendar-color"
-                            name="color"
-                            defaultValue="#ff7a18"
-                            onChange={handleChange}
-                        />
-                    </div>
+                <div className="form-field color-field-row">
+                    <label htmlFor="calendar-color" className="color-label">
+                        Set calendar color:
+                    </label>
+                    <input
+                        type="color"
+                        id="calendar-color"
+                        name="color"
+                        defaultValue="#ff7a18"
+                        onChange={handleChange}
+                    />
                 </div>
 
                 <div className="form-actions">
@@ -106,8 +70,7 @@ const CalendarPopover = ({ isOpen, onClose, onSubmit, anchorPosition }) => {
                     </button>
                 </div>
             </form>
-        </div>,
-        document.body
+        </FormPopover>
     );
 };
 
