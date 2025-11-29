@@ -2,17 +2,17 @@ import { useState } from 'react';
 
 const useForm = (fields, onSubmit) => {
     const initFormState = fields.reduce((acc, field) => {
-        acc[field.name] = "";
+        acc[field.name] = field.defaultValue !== undefined ? field.defaultValue : "";
         return acc;
     }, {});
 
     const [formData, setFormData] = useState(initFormState);
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
+        const { name, value, type, checked } = e.target;
         setFormData(prevData => ({
             ...prevData,
-            [name]: value
+            [name]: type === 'checkbox' ? checked : value
         }));
     };
 
@@ -27,10 +27,16 @@ const useForm = (fields, onSubmit) => {
         return false;
     };
 
+    const resetForm = () => {
+        setFormData(initFormState);
+    };
+
     return {
         formData,
+        setFormData,
         handleChange,
-        handleSubmit
+        handleSubmit,
+        resetForm
     };
 };
 

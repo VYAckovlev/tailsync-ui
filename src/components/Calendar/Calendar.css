@@ -88,8 +88,8 @@
 }
 
 .calendar-wrapper .fc-event {
-    border: none;
-    border-radius: 8px;
+    border: none !important;
+    border-radius: 8px !important;
     padding: 4px 8px;
     margin: 2px;
     font-size: 13px;
@@ -97,7 +97,10 @@
     cursor: pointer;
     transition: all var(--transition-fast);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(8px);
+}
+
+.calendar-wrapper .fc-event .fc-event-main {
+    color: white !important;
 }
 
 .calendar-wrapper .fc-event:hover {

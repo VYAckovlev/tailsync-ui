@@ -25,6 +25,7 @@ const Calendar = React.forwardRef(({
         locale: 'en-gb',
         firstDay: 1,
         datesSet: onDatesSet,
+        eventDisplay: 'block',
     };
 
     return (

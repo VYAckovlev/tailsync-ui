@@ -1,22 +1,33 @@
 import {useState, useRef} from 'react';
+import toast from "react-hot-toast";
 import "./Sidebar.css";
 import "../../hooks/useClickOutside.js"
 import CalendarGroup from "../CalendarGroup/CalendarGroup.jsx";
 import {useClickOutside} from "../../hooks/useClickOutside.js";
 import PlusIcon from "../../shared/icons/Plus.icon.jsx";
 import CalendarPopover from "../CalendarPopover/CalendarPopover.jsx";
+import EventPopover from "../EventPopover/EventPopover.jsx";
 import { calendarApi } from "../../services/calendarApi.js";
+import { eventApi } from "../../services/eventApi.js";
 
 const Sidebar = () => {
     const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [isCalendarPopoverOpen, setIsCalendarPopoverOpen] = useState(false);
+    const [isEventPopoverOpen, setIsEventPopoverOpen] = useState(false);
+    const [eventPopoverType, setEventPopoverType] = useState('arrangement');
     const [popoverAnchorPosition, setPopoverAnchorPosition] = useState({ x: 0, y: 0 });
     const createRef = useRef(null);
 
     useClickOutside(createRef, () => setIsCreateOpen(false));
 
-    const handleCreateClick = (type) =>{
-        console.log(`Create: ${type}`);
+    const handleCreateClick = (type, e) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        setPopoverAnchorPosition({
+            x: rect.right + 10,
+            y: rect.top
+        });
+        setEventPopoverType(type);
+        setIsEventPopoverOpen(true);
         setIsCreateOpen(false);
     };
 
@@ -37,9 +48,22 @@ const Sidebar = () => {
             // TODO: Refresh calendar list when state management is implemented
         } catch (error) {
             console.error('Failed to create calendar:', error);
-            // TODO: Show error toast notification
+            toast.error('Failed to create calendar');
         }
     };
+
+    const handleEventSubmit = async (eventData) => {
+        try {
+            await eventApi.createEvent(eventData);
+            console.log('Event created:', eventData);
+            setIsEventPopoverOpen(false);
+            // TODO: Refresh event list when state management is implemented
+        } catch (error) {
+            console.error('Failed to create event:', error);
+            toast.error('Failed to create event', error);
+        }
+    };
+
     return (
         <aside className="sidebar">
             <div className="create-section" ref={createRef}>
@@ -50,13 +74,13 @@ const Sidebar = () => {
                     <span className="create-label">Create</span>
                 </button>
                 <div className={`create-dropdown ${isCreateOpen ? 'open' : ''}`}>
-                    <button className="create-item" onClick={() => handleCreateClick('arrangement')}>
+                    <button className="create-item" onClick={(e) => handleCreateClick('arrangement', e)}>
                         Arrangement
                     </button>
-                    <button className="create-item" onClick={() => handleCreateClick('reminder')}>
+                    <button className="create-item" onClick={(e) => handleCreateClick('reminder', e)}>
                         Reminder
                     </button>
-                    <button className="create-item" onClick={() => handleCreateClick('task')}>
+                    <button className="create-item" onClick={(e) => handleCreateClick('task', e)}>
                         Task
                     </button>
                 </div>
@@ -76,6 +100,14 @@ const Sidebar = () => {
                 onClose={() => setIsCalendarPopoverOpen(false)}
                 onSubmit={handleCalendarSubmit}
                 anchorPosition={popoverAnchorPosition}
+            />
+
+            <EventPopover
+                isOpen={isEventPopoverOpen}
+                onClose={() => setIsEventPopoverOpen(false)}
+                onSubmit={handleEventSubmit}
+                anchorPosition={popoverAnchorPosition}
+                eventType={eventPopoverType}
             />
         </aside>
     );
