@@ -6,7 +6,7 @@ import { calendarApi } from '../../services/calendarApi.js';
 import { formatForInput } from "../../utils/DateUtils.js";
 import './EventPopover.css';
 
-const EventPopover = ({ isOpen, onClose, onSubmit, anchorPosition, eventType }) => {
+const EventPopover = ({ isOpen, onClose, onSubmit, anchorPosition, eventType, initialDate }) => {
     const [currentEventType, setCurrentEventType] = useState(eventType);
     const [calendars, setCalendars] = useState([]);
     const [isLoadingCalendars, setIsLoadingCalendars] = useState(true);
@@ -28,19 +28,50 @@ const EventPopover = ({ isOpen, onClose, onSubmit, anchorPosition, eventType }) 
         }
     );
 
+    const prefillDateFields = (dateInfo) => {
+        const { dateStr, date, allDay } = dateInfo;
+        const isAllDayEvent = allDay !== undefined ? allDay : true;
+
+        let startValue;
+        if (isAllDayEvent) {
+            startValue = dateStr.split('T')[0];
+        } else {
+            startValue = formatForInput(date, false);
+        }
+
+        let endValue;
+        if (!isAllDayEvent) {
+            const endDate = new Date(date);
+            endDate.setHours(endDate.getHours() + 1);
+            endValue = formatForInput(endDate, false);
+        }
+
+        setFormData(prev => ({
+            ...prev,
+            start: startValue,
+            end: endValue || '',
+            isAllDay: isAllDayEvent
+        }));
+    };
+
     useEffect(() => {
         if (isOpen) {
             setCurrentEventType(eventType);
             fetchCalendars();
             resetForm();
+
             if (!formData.color) {
                 setFormData(prev => ({
                     ...prev,
                     color: config.color
                 }));
             }
+
+            if (initialDate) {
+                prefillDateFields(initialDate);
+            }
         }
-    }, [isOpen, eventType]);
+    }, [isOpen, eventType, initialDate]);
 
     const fetchCalendars = async () => {
         try {
