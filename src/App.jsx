@@ -13,6 +13,7 @@ import CalendarMonth from "./pages/Calendar/Month/CalendarMonth.jsx";
 import CalendarYear from "./pages/Calendar/Year/CalendarYear.jsx";
 import CalendarWeek from "./pages/Calendar/Week/CalendarWeek.jsx";
 import CalendarDay from "./pages/Calendar/Day/CalendarDay.jsx";
+import ProtectedRoute from "./components/ProtectedRout/ProtectedRoute.jsx";
 
 function App() {
     return (
@@ -41,7 +42,13 @@ function App() {
                         <Route path="password-reset/:token" element={<PasswordResetConfirm />} />
                     </Route>
                     <Route path="*" element={<Navigate to="/auth/login" replace />} />
-                    <Route path="/tailsync" element={<MainLayout/>}>
+                    <Route path="/tailsync"
+                           element={
+                        <ProtectedRoute>
+                            <MainLayout/>
+                        </ProtectedRoute>
+                        }
+                    >
                         <Route index element={<Navigate to="month" replace />} />
                         <Route path="year" element={<CalendarYear />}/>
                         <Route path="month" element={<CalendarMonth />} />
