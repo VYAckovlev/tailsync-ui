@@ -1,13 +1,13 @@
-import { createContext, useState, useContext } from "react";
+import { createContext, useState } from "react";
 import { userApi } from "../services/userApi";
-import { AuthContext } from "./AuthContext";
+import { useAuth } from "./AuthContext";
 
 export const UserContext = createContext(null);
 
 export const UserProvider = ({ children }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const { user, setUser } = useContext(AuthContext);
+    const { updateUser } = useAuth();
 
     const updateName = async (name) => {
         setError(null);
@@ -16,8 +16,8 @@ export const UserProvider = ({ children }) => {
         try {
             const response = await userApi.updateName(name);
 
-            if (setUser) {
-                setUser(prevUser => ({ ...prevUser, name }));
+            if (updateUser) {
+                updateUser({ name });
             }
 
             return { success: true, message: response.message };
@@ -51,8 +51,8 @@ export const UserProvider = ({ children }) => {
         try {
             const response = await userApi.updateAvatar(avatar);
 
-            if (setUser && response.avatar) {
-                setUser(prevUser => ({ ...prevUser, avatar: response.avatar }));
+            if (updateUser && response.avatar) {
+                updateUser({ avatar: response.avatar });
             }
 
             return { success: true, message: response.message };

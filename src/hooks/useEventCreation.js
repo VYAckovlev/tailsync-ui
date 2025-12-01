@@ -10,6 +10,11 @@ export const useEventCreation = () => {
     const [events, setEvents] = useState([]);
     const [shouldRefreshEvents, setShouldRefreshEvents] = useState(0);
 
+    const [isEventDetailsPopoverOpen, setIsEventDetailsPopoverOpen] = useState(false);
+    const [selectedEvent, setSelectedEvent] = useState(null);
+    const [eventDetailsPosition, setEventDetailsPosition] = useState({ x: 0, y: 0 });
+
+
     useEffect(() => {
         fetchEvents();
     }, [shouldRefreshEvents]);
@@ -78,12 +83,119 @@ export const useEventCreation = () => {
     };
 
     const handleEventClick = (info) => {
-        console.log('Event clicked:', info.event);
-        alert(`Event: ${info.event.title}`);
+        const event = info.event;
+        const eventType = event.extendedProps?.type || 'arrangement';
+        const meetingLink = event.extendedProps?.link;
+
+        if (eventType === 'arrangement' && meetingLink) {
+            window.open(meetingLink, '_blank');
+            return;
+        }
+
+        const position = calculatePopoverPosition(info.jsEvent);
+        openEventDetails(info, position);
+    };
+
+    const openEventDetails = (eventInfo, position) => {
+        const event = eventInfo.event;
+
+        const eventData = {
+            id: event.id,
+            title: event.title,
+            start: event.start,
+            end: event.end,
+            allDay: event.allDay,
+            backgroundColor: event.backgroundColor,
+            color: event.backgroundColor,
+            type: event.extendedProps?.type || 'arrangement',
+            description: event.extendedProps?.description || '',
+            location: event.extendedProps?.location || '',
+            calendarId: event.extendedProps?.calendar_id || event.extendedProps?.calendarId || '',
+            link: event.extendedProps?.link || '',
+        };
+
+        setSelectedEvent(eventData);
+        setEventDetailsPosition(position);
+        setIsEventDetailsPopoverOpen(true);
+    };
+
+    const handleEventDidMount = (info) => {
+        const eventElement = info.el;
+
+        const editButton = document.createElement('button');
+        editButton.className = 'event-edit-button';
+        editButton.innerHTML = '⋮';
+        editButton.title = 'Edit event';
+
+        editButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+
+            const position = calculatePopoverPosition(e);
+            openEventDetails(info, position);
+        });
+
+        eventElement.style.position = 'relative';
+        eventElement.appendChild(editButton);
+    };
+
+    const handleEventUpdate = async (eventId, eventData) => {
+        try {
+            const payload = {
+                title: eventData.title,
+                type: eventData.type,
+                color: eventData.color,
+                calendar_id: eventData.calendarId,
+                description: eventData.description,
+            };
+
+            if (eventData.start) {
+                payload.start = eventData.start;
+            }
+
+            if (eventData.end) {
+                payload.end = eventData.end;
+            }
+
+            if (eventData.location) {
+                payload.location = eventData.location;
+            }
+
+            if (eventData.link) {
+                payload.link = eventData.link;
+            }
+
+            await eventApi.updateEvent(eventId, payload);
+            toast.success('Event updated successfully');
+            setIsEventDetailsPopoverOpen(false);
+            setShouldRefreshEvents(prev => prev + 1);
+        } catch (error) {
+            console.error('Failed to update event:', error);
+            toast.error('Failed to update event');
+            throw error;
+        }
+    };
+
+    const handleEventDelete = async (eventId) => {
+        try {
+            await eventApi.deleteEvent(eventId);
+            toast.success('Event deleted successfully');
+            setIsEventDetailsPopoverOpen(false);
+            setShouldRefreshEvents(prev => prev + 1);
+        } catch (error) {
+            console.error('Failed to delete event:', error);
+            toast.error('Failed to delete event');
+            throw error;
+        }
     };
 
     const closeEventPopover = () => {
         setIsEventPopoverOpen(false);
+    };
+
+    const closeEventDetailsPopover = () => {
+        setIsEventDetailsPopoverOpen(false);
+        setSelectedEvent(null);
     };
 
     return {
@@ -99,5 +211,13 @@ export const useEventCreation = () => {
 
         handleEventSubmit,
         closeEventPopover,
+
+        isEventDetailsPopoverOpen,
+        selectedEvent,
+        eventDetailsPosition,
+        handleEventDidMount,
+        handleEventUpdate,
+        handleEventDelete,
+        closeEventDetailsPopover,
     };
 };

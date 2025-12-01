@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from "../../context/AuthContext.jsx";
 import AuthForm from '../../components/AuthForm/AuthForm';
 import toast from "react-hot-toast";
 import {useLocation, useNavigate} from "react-router-dom";

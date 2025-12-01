@@ -1,20 +1,20 @@
 import React, { useRef, useEffect } from 'react';
-import { useOutletContext } from 'react-router-dom';
 import ChronosCalendar from '../../../components/Calendar/Calendar.jsx';
-import { useCalendar } from '../../../hooks/useCalendar.js';
+import { useCalendar } from '../../../context/CalendarContext.jsx';
+import { useEvents } from '../../../context/EventsContext';
 import './CalendarMonth.css';
 
 const CalendarMonth = () => {
     const calendarRef = useRef(null);
-    const { setCalendarRef, setCurrentDate } = useCalendar();
-    const contextData = useOutletContext();
+    const { registerCalendarRef, updateDate } = useCalendar();
+    const { events, handleDateClick, handleEventClick, handleEventDidMount } = useEvents();
 
     useEffect(() => {
         if (calendarRef.current) {
-            setCalendarRef(calendarRef.current);
-            setCurrentDate(calendarRef.current.getApi().getDate());
+            registerCalendarRef(calendarRef.current);
+            updateDate(calendarRef.current.getApi().getDate());
         }
-    }, [setCalendarRef, setCurrentDate]);
+    }, [registerCalendarRef, updateDate]);
 
     const MOCK_EVENTS = [
         {
@@ -83,12 +83,10 @@ const CalendarMonth = () => {
         }
     ];
 
-    const events = contextData?.events?.length > 0 ? contextData.events : MOCK_EVENTS;
-    const handleDateClick = contextData?.handleDateClick || ((arg) => alert(`Click on data: ${arg.dateStr}`));
-    const handleEventClick = contextData?.handleEventClick || ((info) => alert(`Event: ${info.event.title}`));
+    const displayEvents = events?.length > 0 ? events : MOCK_EVENTS;
 
     const handleDatesSet = (dateInfo) => {
-        setCurrentDate(dateInfo.view.currentStart);
+        updateDate(dateInfo.view.currentStart);
     };
 
     return (
@@ -96,9 +94,10 @@ const CalendarMonth = () => {
             <ChronosCalendar
                 ref={calendarRef}
                 view="dayGridMonth"
-                events={events}
+                events={displayEvents}
                 onDateClick={handleDateClick}
                 onEventClick={handleEventClick}
+                onEventDidMount={handleEventDidMount}
                 onDatesSet={handleDatesSet}
             />
         </div>

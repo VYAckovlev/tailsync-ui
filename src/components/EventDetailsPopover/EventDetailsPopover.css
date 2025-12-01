@@ -1,0 +1,65 @@
+/* Import base styles from EventPopover */
+@import '../EventPopover/EventPopover.css';
+
+/* Event type display (read-only badge) */
+.event-type-display {
+    margin-bottom: 20px;
+}
+
+.event-type-badge {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 12px;
+    color: white;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Form actions with delete button */
+.event-details-popover .form-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: space-between;
+}
+
+/* Delete button styling */
+.event-details-popover .delete-button {
+    padding: 12px 24px;
+    border: 2px solid rgba(239, 68, 68, 0.5);
+    border-radius: 18px;
+    background: transparent;
+    color: rgba(239, 68, 68, 0.9);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    outline: none;
+}
+
+.event-details-popover .delete-button:hover {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.7);
+    color: rgba(239, 68, 68, 1);
+}
+
+.event-details-popover .delete-button:active {
+    transform: scale(0.98);
+}
+
+.event-details-popover .delete-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Primary button (Update) */
+.event-details-popover .primary-button {
+    flex: 1;
+}
+
+.event-details-popover .primary-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}

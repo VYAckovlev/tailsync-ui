@@ -1,53 +1,46 @@
-import React, { createContext, useState } from 'react';
+import React, {createContext, useState, useCallback, useMemo, useEffect, useContext} from 'react';
+import { calendarApi } from '../services/calendarApi';
 
 const CalendarContext = createContext();
 
 export const CalendarProvider = ({ children }) => {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [calendarRef, setCalendarRef] = useState(null);
+    const [calendars, setCalendars] = useState([]);
+    const [isLoading, setLoading] = useState(false);
 
-    const goToNext = () => {
-        if (calendarRef) {
-            const api = calendarRef.getApi();
-            api.next();
-            setCurrentDate(api.getDate());
-        }
-    };
+    useEffect(() => {
+        const fetchCalendars = async () => {
+            setLoading(true);
+            try {
+                const response = await calendarApi.listCalendars();
+                setCalendars(response.data || []);
+            } catch (error) {
+                console.error('Failed to fetch calendars:', error);
+                setCalendars([]);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchCalendars();
+    }, []);
 
-    const goToPrev = () => {
-        if (calendarRef) {
-            const api = calendarRef.getApi();
-            api.prev();
-            setCurrentDate(api.getDate());
-        }
-    };
+    const updateDate = useCallback((date) => {
+        setCurrentDate(new Date(date));
+    }, []);
 
-    const goToToday = () => {
-        if (calendarRef) {
-            const api = calendarRef.getApi();
-            api.today();
-            setCurrentDate(new Date());
-        }
-    };
+    const registerCalendarRef = useCallback((ref) => {
+        setCalendarRef(ref);
+    }, []);
 
-    const goToDate = (date) => {
-        if (calendarRef) {
-            const api = calendarRef.getApi();
-            api.gotoDate(date);
-            setCurrentDate(new Date(date));
-        }
-    };
-
-    const value = {
+    const value = useMemo(() => ({
         currentDate,
-        setCurrentDate,
         calendarRef,
-        setCalendarRef,
-        goToNext,
-        goToPrev,
-        goToToday,
-        goToDate
-    };
+        calendars,
+        isLoading,
+        updateDate,
+        registerCalendarRef
+    }), [currentDate, calendarRef, calendars, isLoading, updateDate, registerCalendarRef]);
 
     return (
         <CalendarContext.Provider value={value}>
@@ -56,4 +49,10 @@ export const CalendarProvider = ({ children }) => {
     );
 };
 
-export default CalendarContext;
+export const useCalendar = () => {
+    const context = useContext(CalendarContext);
+    if (!context) {
+        throw new Error('useCalendar must be used within a CalendarProvider');
+    }
+    return context;
+};

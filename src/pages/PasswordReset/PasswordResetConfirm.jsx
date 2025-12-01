@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
+import { usePasswordResetConfirm } from "../../hooks/useAuth.js";
 import AuthForm from '../../components/AuthForm/AuthForm';
 import toast from "react-hot-toast";
 import { passwordResetConfirmConfig, formValidators } from '../../shared/constants/form';
@@ -8,7 +8,7 @@ import { passwordResetConfirmConfig, formValidators } from '../../shared/constan
 const PasswordResetConfirm = () => {
     const { token } = useParams();
     const navigate = useNavigate();
-    const { confirmPasswordReset, loading } = useAuth();
+    const { confirmPasswordReset, isLoading, error } = usePasswordResetConfirm();
 
     const onSubmit = async (data) => {
         try {
@@ -42,7 +42,7 @@ const PasswordResetConfirm = () => {
         <AuthForm
             fields={passwordResetConfirmConfig.fields}
             onSubmit={onSubmit}
-            submitButtonText={loading ? passwordResetConfirmConfig.loadingText : passwordResetConfirmConfig.submitButtonText}
+            submitButtonText={isLoading ? passwordResetConfirmConfig.loadingText : passwordResetConfirmConfig.submitButtonText}
         />
     );
 };

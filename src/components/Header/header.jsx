@@ -1,8 +1,9 @@
-import { useAuth } from "../../hooks/useAuth.js";
+import { useAuth } from "../../context/AuthContext.jsx";
 import { useNavigate, useLocation } from "react-router-dom";
 import Logo from "../../shared/logo/logo.jsx";
 import UserMenu from "../UserMenu/UserMenu.jsx";
-import { useCalendar } from "../../hooks/useCalendar.js";
+import { useCalendar } from '../../context/CalendarContext.jsx';
+import { useCalendarNavigation } from "../../hooks/useCalendar.js";
 import Chevron from "../../shared/icons/Chevron.icon.jsx";
 import "./header.css";
 import ViewSelector from "../ViewSelector/ViewSelector.jsx";
@@ -11,7 +12,8 @@ const Header = () => {
     const { user, isAuthenticated, logout } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
-    const { currentDate, goToNext, goToPrev, goToToday } = useCalendar();
+    const { currentDate } = useCalendar();
+    const { goToNext, goToPrev, goToToday } = useCalendarNavigation();
 
     const currentView = location.pathname.split('/').pop();
 

@@ -11,6 +11,7 @@ const Calendar = React.forwardRef(({
                       events,
                       onDateClick,
                       onEventClick,
+                      onEventDidMount,
                       onDatesSet,
                       extraOptions = {}
                   }, ref) => {
@@ -26,6 +27,7 @@ const Calendar = React.forwardRef(({
         firstDay: 1,
         datesSet: onDatesSet,
         eventDisplay: 'block',
+        eventDidMount: onEventDidMount,
     };
 
     return (

@@ -1,31 +1,23 @@
 import React, { useRef, useEffect } from 'react';
-import { useOutletContext } from 'react-router-dom';
 import Calendar from '../../../components/Calendar/Calendar.jsx';
-import { useCalendar } from '../../../hooks/useCalendar.js';
+import { useCalendar } from '../../../context/CalendarContext.jsx';
+import { useEvents } from '../../../context/EventsContext';
 import './CalendarYear.css';
 
 const CalendarYear = () => {
     const calendarRef = useRef(null);
-    const { setCalendarRef, setCurrentDate } = useCalendar();
-    const contextData = useOutletContext();
+    const { registerCalendarRef, updateDate } = useCalendar();
+    const { events, handleDateClick, handleEventClick } = useEvents();
 
     useEffect(() => {
         if (calendarRef.current) {
-            setCalendarRef(calendarRef.current);
-            setCurrentDate(calendarRef.current.getApi().getDate());
+            registerCalendarRef(calendarRef.current);
+            updateDate(calendarRef.current.getApi().getDate());
         }
-    }, [setCalendarRef, setCurrentDate]);
-
-    const events = contextData?.events || [];
-    const handleDateClick = contextData?.handleDateClick || ((arg) => {
-        console.log('Data click (Year View):', arg);
-    });
-    const handleEventClick = contextData?.handleEventClick || ((info) => {
-        console.log('Event click:', info.event);
-    });
+    }, [registerCalendarRef, updateDate]);
 
     const handleDatesSet = (dateInfo) => {
-        setCurrentDate(dateInfo.view.currentStart);
+        updateDate(dateInfo.view.currentStart);
     };
 
     return (

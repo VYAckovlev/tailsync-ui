@@ -1,11 +1,11 @@
 import React from 'react';
-import { useAuth } from '../../hooks/useAuth';
+import { usePasswordReset } from "../../hooks/useAuth.js";
 import AuthForm from '../../components/AuthForm/AuthForm';
 import toast from "react-hot-toast";
 import { passwordResetConfig } from '../../shared/constants/form';
 
 const PasswordReset = () => {
-    const { requestPasswordReset, loading } = useAuth();
+    const { requestPasswordReset, isLoading, error } = usePasswordReset();
 
     const onSubmit = async (data) => {
         try {
@@ -23,7 +23,7 @@ const PasswordReset = () => {
         <AuthForm
             fields={passwordResetConfig.fields}
             onSubmit={onSubmit}
-            submitButtonText={loading ? passwordResetConfig.loadingText : passwordResetConfig.submitButtonText}
+            submitButtonText={isLoading ? passwordResetConfig.loadingText : passwordResetConfig.submitButtonText}
         />
     );
 };

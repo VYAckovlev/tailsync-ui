@@ -2,83 +2,99 @@ import { useEffect, useState } from 'react';
 import useForm from '../../hooks/useForm.js';
 import FormPopover from '../FormPopover/FormPopover.jsx';
 import { EVENT_TYPES, EVENT_FORM_CONFIGS } from '../../shared/constants/eventForm.config.js';
+import { calendarApi } from '../../services/calendarApi.js';
 import { formatForInput } from "../../utils/DateUtils.js";
-import { useCalendar } from '../../context/CalendarContext.jsx';
-import './EventPopover.css';
+import './EventDetailsPopover.css';
 
-const EventPopover = ({ isOpen, onClose, onSubmit, anchorPosition, eventType, initialDate }) => {
-    const [currentEventType, setCurrentEventType] = useState(eventType);
-    const { calendars, isLoading: isLoadingCalendars } = useCalendar();
+const EventDetailsPopover = ({
+    isOpen,
+    onClose,
+    onUpdate,
+    onDelete,
+    anchorPosition,
+    eventData
+}) => {
+    const [calendars, setCalendars] = useState([]);
+    const [isLoadingCalendars, setIsLoadingCalendars] = useState(true);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const config = EVENT_FORM_CONFIGS[currentEventType] || EVENT_FORM_CONFIGS[EVENT_TYPES.ARRANGEMENT];
+    const eventType = eventData?.type || EVENT_TYPES.ARRANGEMENT;
+    const config = EVENT_FORM_CONFIGS[eventType] || EVENT_FORM_CONFIGS[EVENT_TYPES.ARRANGEMENT];
 
     const { formData, setFormData, handleChange, handleSubmit, resetForm } = useForm(
         config.fields,
         async (data) => {
-            const eventData = {
-                ...data,
-                type: currentEventType,
-                color: data.color || config.color
-            };
+            setIsSubmitting(true);
+            try {
+                const updatedEventData = {
+                    ...data,
+                    type: eventType,
+                    color: data.color || config.color
+                };
 
-            await onSubmit(eventData);
-            resetForm();
-            onClose();
+                await onUpdate(eventData.id, updatedEventData);
+            } catch (error) {
+                console.error('Failed to update event:', error);
+                throw error;
+            } finally {
+                setIsSubmitting(false);
+            }
         }
     );
 
-    const prefillDateFields = (dateInfo) => {
-        const { dateStr, date, allDay } = dateInfo;
-        const isAllDayEvent = allDay !== undefined ? allDay : true;
+    const prefillEventData = (event) => {
+        if (!event) return;
 
-        let startValue;
-        if (isAllDayEvent) {
-            startValue = dateStr.split('T')[0];
-        } else {
-            startValue = formatForInput(date, false);
-        }
+        const isAllDay = event.allDay || false;
 
-        let endValue;
-        if (!isAllDayEvent) {
-            const endDate = new Date(date);
-            endDate.setHours(endDate.getHours() + 1);
-            endValue = formatForInput(endDate, false);
-        }
-
-        setFormData(prev => ({
-            ...prev,
-            start: startValue,
-            end: endValue || '',
-            isAllDay: isAllDayEvent
-        }));
+        setFormData({
+            title: event.title || '',
+            color: event.color || event.backgroundColor || config.color,
+            calendarId: event.calendarId || event.calendar_id || '',
+            description: event.description || '',
+            location: event.location || '',
+            isAllDay: isAllDay,
+            start: event.start ? formatForInput(event.start, isAllDay) : '',
+            end: event.end ? formatForInput(event.end, isAllDay) : '',
+            link: event.link || '',
+        });
     };
 
     useEffect(() => {
-        if (isOpen) {
-            setCurrentEventType(eventType);
-            resetForm();
-
-            if (!formData.color) {
-                setFormData(prev => ({
-                    ...prev,
-                    color: config.color
-                }));
-            }
-
-            if (initialDate) {
-                prefillDateFields(initialDate);
-            }
+        if (isOpen && eventData) {
+            fetchCalendars();
+            prefillEventData(eventData);
         }
-    }, [isOpen, eventType, initialDate]);
+    }, [isOpen, eventData]);
 
-    useEffect(() => {
-        if (calendars.length > 0 && !formData.calendarId) {
-            setFormData(prev => ({
-                ...prev,
-                calendarId: calendars[0].id
-            }));
+    const fetchCalendars = async () => {
+        try {
+            setIsLoadingCalendars(true);
+            const response = await calendarApi.listCalendars();
+            const calendarList = response.data || [];
+            setCalendars(calendarList);
+        } catch (error) {
+            console.error('Failed to fetch calendars:', error);
+            setCalendars([]);
+        } finally {
+            setIsLoadingCalendars(false);
         }
-    }, [calendars, formData.calendarId]);
+    };
+
+    const handleDelete = async () => {
+        if (!confirm('Are you sure you want to delete this event?')) {
+            return;
+        }
+
+        setIsSubmitting(true);
+        try {
+            await onDelete(eventData.id);
+        } catch (error) {
+            console.error('Failed to delete event:', error);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
     const renderField = (field) => {
         const commonProps = {
@@ -198,10 +214,7 @@ const EventPopover = ({ isOpen, onClose, onSubmit, anchorPosition, eventType, in
         return { grouped, ungrouped };
     };
 
-    const handleEventTypeChange = (newType) => {
-        setCurrentEventType(newType);
-        resetForm();
-    };
+    if (!eventData) return null;
 
     const { grouped, ungrouped } = groupFields(config.fields);
 
@@ -210,24 +223,9 @@ const EventPopover = ({ isOpen, onClose, onSubmit, anchorPosition, eventType, in
             isOpen={isOpen}
             onClose={onClose}
             anchorPosition={anchorPosition}
-            title={`Create ${config.label}`}
-            className="event-popover"
+            title={`Edit ${config.label}`}
+            className="event-details-popover"
         >
-            <div className="event-type-switcher">
-                {Object.entries(EVENT_TYPES).map(([key, type]) => (
-                    <button
-                        key={type}
-                        type="button"
-                        className={`event-type-button ${currentEventType === type ? 'active' : ''}`}
-                        onClick={() => handleEventTypeChange(type)}
-                        style={{
-                            '--event-color': EVENT_FORM_CONFIGS[type].color
-                        }}
-                    >
-                        {EVENT_FORM_CONFIGS[type].label}
-                    </button>
-                ))}
-            </div>
             <form onSubmit={handleSubmit} className="event-form">
                 {ungrouped.map(field => {
                     const isAllDay = formData.isAllDay || false;
@@ -263,8 +261,20 @@ const EventPopover = ({ isOpen, onClose, onSubmit, anchorPosition, eventType, in
                 ))}
 
                 <div className="form-actions">
-                    <button type="submit" className="primary-button">
-                        Create
+                    <button
+                        type="button"
+                        onClick={handleDelete}
+                        className="delete-button"
+                        disabled={isSubmitting}
+                    >
+                        Delete Event
+                    </button>
+                    <button
+                        type="submit"
+                        className="primary-button"
+                        disabled={isSubmitting}
+                    >
+                        {isSubmitting ? 'Updating...' : 'Update Event'}
                     </button>
                 </div>
             </form>
@@ -272,4 +282,4 @@ const EventPopover = ({ isOpen, onClose, onSubmit, anchorPosition, eventType, in
     );
 };
 
-export default EventPopover;
+export default EventDetailsPopover;
