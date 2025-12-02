@@ -1,6 +1,7 @@
 import {createContext, useState, useEffect, useContext, useCallback, useMemo} from "react";
 import { authService } from "../utils/AuthService";
 import { authApi } from "../services/authApi";
+import { getAvatarUrl } from "../utils/UserUtils";
 
 export const AuthContext = createContext(null);
 
@@ -13,7 +14,10 @@ export const AuthProvider = ({ children }) => {
             try {
                 if (authService.isAuthenticated()) {
                     const userData = await authApi.fetchCurrentUser();
-                    setUser(userData.me);
+                    setUser({
+                        ...userData.me,
+                        avatar: getAvatarUrl(userData.me.avatar)
+                    });
                 }
             } catch (err) {
                 console.error("Auth check failed:", err);
@@ -32,7 +36,10 @@ export const AuthProvider = ({ children }) => {
             authService.setToken(access_token);
 
             const UserData = await authApi.fetchCurrentUser();
-            setUser(UserData.me);
+            setUser({
+                ...UserData.me,
+                avatar: getAvatarUrl(UserData.me.avatar)
+            });
             return { success: true };
         } catch (err) {
             console.error("Login failed:", err);

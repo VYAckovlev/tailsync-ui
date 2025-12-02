@@ -1,6 +1,7 @@
 import { createContext, useState } from "react";
 import { userApi } from "../services/userApi";
 import { useAuth } from "./AuthContext";
+import { getAvatarUrl } from "../utils/UserUtils";
 
 export const UserContext = createContext(null);
 
@@ -44,19 +45,21 @@ export const UserProvider = ({ children }) => {
         }
     };
 
-    const updateAvatar = async (avatar) => {
+    const updateAvatar = async (formData) => {
         setError(null);
         setLoading(true);
 
         try {
-            const response = await userApi.updateAvatar(avatar);
-
-            if (updateUser && response.avatar) {
-                updateUser({ avatar: response.avatar });
+            const response = await userApi.updateAvatar(formData);
+            if (updateUser && response.data?.changes?.avatar) {
+                const fullAvatarUrl = getAvatarUrl(response.data.changes.avatar);
+                updateUser({ avatar: fullAvatarUrl });
+            } else {
+                console.error('Avatar not found in response. Response structure:', response);
             }
-
             return { success: true, message: response.message };
         } catch (err) {
+            console.error('Avatar update error:', err);
             setError(err.message);
             return { success: false, error: err.message };
         } finally {

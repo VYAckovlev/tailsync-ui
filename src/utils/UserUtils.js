@@ -1,3 +1,5 @@
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 export const getUserInitials = (user) => {
     if (!user) {
         return 'U';
@@ -25,4 +27,16 @@ export const getUserInitials = (user) => {
     }
 
     return 'U';
+};
+
+export const getAvatarUrl = (avatarPath) => {
+    if (!avatarPath || !avatarPath.trim()) {
+        return null;
+    }
+
+    if (avatarPath.startsWith('http://') || avatarPath.startsWith('https://')) {
+        return avatarPath;
+    }
+
+    return `${API_BASE_URL}${avatarPath}`;
 };
