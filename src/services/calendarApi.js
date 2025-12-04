@@ -2,7 +2,7 @@ import { apiClient } from './api';
 
 const CALENDAR_ENDPOINTS = {
     CREATE: '/calendar',
-    LIST: '/calendar',
+    GET: '/calendars',
     UPDATE: '/calendar/:id',
     DELETE: '/calendar/:id',
     SHARE: '/calendar/:id/share',
@@ -12,14 +12,14 @@ const CALENDAR_ENDPOINTS = {
 export const calendarApi = {
     async createCalendar(calendarData) {
         const response = await apiClient.post(CALENDAR_ENDPOINTS.CREATE, {
-            name: calendarData.name,
+            title: calendarData.name,
             color: calendarData.color
         });
         return response.data;
     },
 
-    async listCalendars() {
-        const response = await apiClient.get(CALENDAR_ENDPOINTS.LIST);
+    async getCalendars() {
+        const response = await apiClient.get(CALENDAR_ENDPOINTS.GET);
         return response.data;
     },
 

@@ -1,47 +1,49 @@
 import React, {createContext, useState, useCallback, useMemo, useEffect, useContext} from 'react';
 import { calendarApi } from '../services/calendarApi';
+import { useAuth } from './AuthContext';
 
 const CalendarContext = createContext();
 
-// Mock calendar data
-const mockCalendars = [
-    // My Calendars (isOwner: true)
-    { id: 1, name: 'Personal', color: '#1e88e5', visible: true, isOwner: true },
-    { id: 2, name: 'Work', color: '#e53935', visible: true, isOwner: true },
-    { id: 3, name: 'Family', color: '#43a047', visible: false, isOwner: true },
-
-    // Other Calendars (isOwner: false)
-    { id: 4, name: 'Team Events', color: '#fb8c00', visible: true, isOwner: false },
-    { id: 5, name: 'Holidays', color: '#8e24aa', visible: true, isOwner: false },
-];
-
 export const CalendarProvider = ({ children }) => {
+    const { user } = useAuth();
     const [currentDate, setCurrentDate] = useState(new Date());
     const [calendarRef, setCalendarRef] = useState(null);
     const [calendars, setCalendars] = useState([]);
     const [isLoading, setLoading] = useState(false);
 
-    useEffect(() => {
-        // Using mock data for now
-        setLoading(true);
-        setCalendars(mockCalendars);
-        setLoading(false);
+    const transformCalendar = useCallback((serverCalendar) => {
+        const isSystemCalendar = serverCalendar.owner === null;
 
-        // TODO: Uncomment to use real API
-        // const fetchCalendars = async () => {
-        //     setLoading(true);
-        //     try {
-        //         const response = await calendarApi.listCalendars();
-        //         setCalendars(response.data || []);
-        //     } catch (error) {
-        //         console.error('Failed to fetch calendars:', error);
-        //         setCalendars([]);
-        //     } finally {
-        //         setLoading(false);
-        //     }
-        // };
-        // fetchCalendars();
-    }, []);
+        return {
+            id: serverCalendar.id,
+            name: serverCalendar.title,
+            color: serverCalendar.color || '#9e9e9e',
+            visible: true,
+            isOwner: isSystemCalendar ? true : (user ? serverCalendar.owner === user.id : false),
+            isSystemCalendar: isSystemCalendar,
+            canDelete: !isSystemCalendar,
+            canShare: !isSystemCalendar
+        };
+    }, [user]);
+
+    useEffect(() => {
+        const fetchCalendars = async () => {
+            if (!user) return;
+            setLoading(true);
+            try {
+                const res = await calendarApi.getCalendars();
+                const transformedCalendars = res.data.map(transformCalendar);
+                setCalendars(transformedCalendars);
+            } catch (error) {
+                console.error('Failed to fetch calendars:', error);
+                setCalendars([]);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchCalendars();
+    }, [user, transformCalendar]);
 
     const updateDate = useCallback((date) => {
         setCurrentDate(new Date(date));
@@ -52,25 +54,28 @@ export const CalendarProvider = ({ children }) => {
     }, []);
 
     const refreshCalendars = useCallback(async () => {
+        if (!user) return;
+
         setLoading(true);
         try {
-            // When using real API:
-            // const response = await calendarApi.listCalendars();
-            // setCalendars(response.data || []);
-
-            // For now with mock data:
-            setCalendars(mockCalendars);
+            const res = await calendarApi.getCalendars();
+            const transformedCalendars = res.data.map(transformCalendar);
+            setCalendars(transformedCalendars);
         } catch (error) {
             console.error('Failed to refresh calendars:', error);
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [user, transformCalendar]);
 
-    const myCalendars = useMemo(() =>
-        calendars.filter(cal => cal.isOwner === true),
-        [calendars]
-    );
+    const myCalendars = useMemo(() => {
+        const owned = calendars.filter(cal => cal.isOwner === true);
+        return owned.sort((a, b) => {
+            if (a.isSystemCalendar && !b.isSystemCalendar) return -1;
+            if (!a.isSystemCalendar && b.isSystemCalendar) return 1;
+            return 0;
+        });
+    }, [calendars]);
 
     const otherCalendars = useMemo(() =>
         calendars.filter(cal => cal.isOwner === false),

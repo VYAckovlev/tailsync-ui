@@ -157,18 +157,22 @@ const CalendarItem = ({ calendar, isOwner }) => {
                 >
                     {isOwner && (
                         <>
-                            <button className="calendar-menu-item" onClick={handleAddUserClick}>
-                                Add another user
-                            </button>
+                            {calendar.canShare && (
+                                <button className="calendar-menu-item" onClick={handleAddUserClick}>
+                                    Add another user
+                                </button>
+                            )}
                             <button className="calendar-menu-item" onClick={handleChangeColorClick}>
                                 Change color
                             </button>
                         </>
                     )}
                     {isOwner ? (
-                        <button className="calendar-menu-item" onClick={handleDeleteClick}>
-                            Delete
-                        </button>
+                        calendar.canDelete && (
+                            <button className="calendar-menu-item" onClick={handleDeleteClick}>
+                                Delete
+                            </button>
+                        )
                     ) : (
                         <button className="calendar-menu-item" onClick={handleLeaveClick}>
                             Leave calendar
