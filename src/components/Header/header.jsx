@@ -62,17 +62,6 @@ const Header = () => {
                 </div>
             </div>
 
-            <div className="header-center">
-                <div className="search-container">
-                    <input
-                        type="text"
-                        className="search-input"
-                        placeholder="Search events..."
-                        disabled
-                    />
-                </div>
-            </div>
-
             <div className="header-right">
                 <ViewSelector />
                 {!isAuthenticated ? (
