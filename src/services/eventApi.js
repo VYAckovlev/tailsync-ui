@@ -29,6 +29,11 @@ export const eventApi = {
             payload.location = eventData.location;
         }
 
+        // Add recurrence (only if not empty)
+        if (eventData.recurrence && eventData.recurrence !== '') {
+            payload.recurrence = eventData.recurrence;
+        }
+
         const response = await apiClient.post(EVENT_ENDPOINTS.CREATE, payload);
         return response.data;
     },

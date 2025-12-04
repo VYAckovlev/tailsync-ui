@@ -3,7 +3,9 @@ import toast from "react-hot-toast";
 import "./Sidebar.css";
 import "../../hooks/useClickOutside.js"
 import CalendarGroup from "../CalendarGroup/CalendarGroup.jsx";
+import CalendarItem from "../CalendarItem/CalendarItem.jsx";
 import {useClickOutside} from "../../hooks/useClickOutside.js";
+import {useCalendar} from "../../context/CalendarContext.jsx";
 import PlusIcon from "../../shared/icons/Plus.icon.jsx";
 import CalendarPopover from "../CalendarPopover/CalendarPopover.jsx";
 import EventPopover from "../EventPopover/EventPopover.jsx";
@@ -11,6 +13,7 @@ import { calendarApi } from "../../services/calendarApi.js";
 import { eventApi } from "../../services/eventApi.js";
 
 const Sidebar = () => {
+    const { myCalendars, otherCalendars } = useCalendar();
     const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [isCalendarPopoverOpen, setIsCalendarPopoverOpen] = useState(false);
     const [isEventPopoverOpen, setIsEventPopoverOpen] = useState(false);
@@ -87,11 +90,23 @@ const Sidebar = () => {
             </div>
             <div className="calendars-container">
                 <CalendarGroup title="My Calendars" onPlusClick={handleCreateCalendar}>
-                    {/* // TODO: calendars created by our user */}
+                    {myCalendars.map(calendar => (
+                        <CalendarItem
+                            key={calendar.id}
+                            calendar={calendar}
+                            isOwner={true}
+                        />
+                    ))}
                 </CalendarGroup>
 
                 <CalendarGroup title="Other Calendars">
-                    {/* // TODO: calendars created by another user */}
+                    {otherCalendars.map(calendar => (
+                        <CalendarItem
+                            key={calendar.id}
+                            calendar={calendar}
+                            isOwner={false}
+                        />
+                    ))}
                 </CalendarGroup>
             </div>
 

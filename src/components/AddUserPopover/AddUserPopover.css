@@ -1,0 +1,102 @@
+.add-user-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-size: 0.85rem;
+    color: rgba(241, 245, 255, 0.6);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+}
+
+.add-user-form input[type="email"],
+.add-user-form select {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: rgba(12, 21, 48, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.add-user-form input[type="email"]::placeholder {
+    color: rgba(255, 255, 255, 0.2);
+}
+
+.add-user-form input[type="email"]:focus,
+.add-user-form select:focus {
+    border-color: var(--tailsync-orange-start, #ff7a18);
+    background: rgba(12, 21, 48, 0.9);
+    box-shadow: 0 0 0 3px rgba(255, 122, 24, 0.15);
+}
+
+.add-user-form select {
+    appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    padding-right: 40px;
+}
+
+.add-user-form select option {
+    background: #081733;
+    color: white;
+    padding: 10px;
+}
+
+.field-hint {
+    margin: 4px 0 0;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.4);
+    font-style: italic;
+    line-height: 1.4;
+}
+
+.cancel-button {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.7);
+    padding: 8px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.cancel-button:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.primary-button {
+    background: linear-gradient(135deg, #ff7a18, #ff9f43);
+    border: none;
+    color: white;
+    padding: 8px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    box-shadow: 0 4px 10px rgba(255, 122, 24, 0.3);
+    transition: all 0.2s;
+}
+
+.primary-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 15px rgba(255, 122, 24, 0.4);
+}

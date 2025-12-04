@@ -1,13 +1,19 @@
 import { createContext, useContext } from 'react';
 import { useEventCreation } from '../hooks/useEventCreation';
+import { createEventContentRenderer } from '../components/EventContent/renderEventContent';
 
 const EventsContext = createContext(null);
 
 export const EventsProvider = ({ children }) => {
     const eventLogic = useEventCreation();
 
+    const renderEventContent = createEventContentRenderer(
+        eventLogic.calculatePopoverPosition,
+        eventLogic.openEventDetails
+    );
+
     return (
-        <EventsContext.Provider value={eventLogic}>
+        <EventsContext.Provider value={{...eventLogic, renderEventContent}}>
             {children}
         </EventsContext.Provider>
     );

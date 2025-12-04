@@ -1,7 +1,5 @@
-/* Import base styles from EventPopover */
 @import '../EventPopover/EventPopover.css';
 
-/* Event type display (read-only badge) */
 .event-type-display {
     margin-bottom: 20px;
 }
@@ -18,14 +16,12 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Form actions with delete button */
 .event-details-popover .form-actions {
     display: flex;
     gap: 12px;
     justify-content: space-between;
 }
 
-/* Delete button styling */
 .event-details-popover .delete-button {
     padding: 12px 24px;
     border: 2px solid rgba(239, 68, 68, 0.5);
@@ -54,7 +50,6 @@
     cursor: not-allowed;
 }
 
-/* Primary button (Update) */
 .event-details-popover .primary-button {
     flex: 1;
 }

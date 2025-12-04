@@ -119,26 +119,6 @@ export const useEventCreation = () => {
         setIsEventDetailsPopoverOpen(true);
     };
 
-    const handleEventDidMount = (info) => {
-        const eventElement = info.el;
-
-        const editButton = document.createElement('button');
-        editButton.className = 'event-edit-button';
-        editButton.innerHTML = '⋮';
-        editButton.title = 'Edit event';
-
-        editButton.addEventListener('click', (e) => {
-            e.stopPropagation();
-            e.preventDefault();
-
-            const position = calculatePopoverPosition(e);
-            openEventDetails(info, position);
-        });
-
-        eventElement.style.position = 'relative';
-        eventElement.appendChild(editButton);
-    };
-
     const handleEventUpdate = async (eventId, eventData) => {
         try {
             const payload = {
@@ -215,7 +195,8 @@ export const useEventCreation = () => {
         isEventDetailsPopoverOpen,
         selectedEvent,
         eventDetailsPosition,
-        handleEventDidMount,
+        calculatePopoverPosition,
+        openEventDetails,
         handleEventUpdate,
         handleEventDelete,
         closeEventDetailsPopover,

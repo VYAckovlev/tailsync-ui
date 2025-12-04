@@ -7,7 +7,7 @@ import './CalendarDay.css';
 const CalendarDay = () => {
     const calendarRef = useRef(null);
     const { registerCalendarRef, updateDate } = useCalendar();
-    const { events, handleDateClick, handleEventClick, handleEventDidMount } = useEvents();
+    const { events, handleDateClick, handleEventClick, renderEventContent } = useEvents();
 
     useEffect(() => {
         if (calendarRef.current) {
@@ -58,7 +58,7 @@ const CalendarDay = () => {
                 events={displayEvents}
                 onDateClick={handleDateClick}
                 onEventClick={handleEventClick}
-                onEventDidMount={handleEventDidMount}
+                eventContent={renderEventContent}
                 onDatesSet={handleDatesSet}
                 extraOptions={{
                     firstDay: 1,

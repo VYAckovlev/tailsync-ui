@@ -4,6 +4,23 @@ export const EVENT_TYPES = {
     TASK: 'task'
 };
 
+export const RECURRENCE_OPTIONS = [
+    { value: '', label: 'Select recurrence...' },
+    { value: 'daily', label: 'Daily' },
+    { value: 'weekly', label: 'Weekly' },
+    { value: 'monthly', label: 'Monthly' },
+    { value: 'yearly', label: 'Yearly' }
+];
+
+const recurrenceField = {
+    name: "recurrence",
+    label: "Repeat",
+    type: "select",
+    required: false,
+    defaultValue: "",
+    options: RECURRENCE_OPTIONS
+};
+
 const baseFields = [
     {
         name: "title",
@@ -60,6 +77,7 @@ export const EVENT_FORM_CONFIGS = {
                 type: "datetime-local",
                 required: true
             },
+            recurrenceField,
             {
                 name: "location",
                 label: "Link to meet",
@@ -75,6 +93,7 @@ export const EVENT_FORM_CONFIGS = {
         fields: [
             ...baseFields.slice(0, 2),
             { name: "start", label: "Remind me at", type: "datetime-local", required: true },
+            recurrenceField,
             ...baseFields.slice(2)
         ]
     },
@@ -84,6 +103,7 @@ export const EVENT_FORM_CONFIGS = {
         fields: [
             ...baseFields.slice(0, 2),
             { name: "start", label: "Due Date", type: "datetime-local", required: true },
+            recurrenceField,
             ...baseFields.slice(2)
         ]
     }

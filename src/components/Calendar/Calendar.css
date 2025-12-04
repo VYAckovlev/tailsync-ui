@@ -141,7 +141,6 @@
     margin-right: 4px;
 }
 
-/* Event edit button - three dots */
 .event-edit-button {
     position: absolute;
     top: 2px;
@@ -173,7 +172,6 @@
     transform: scale(0.95);
 }
 
-/* Show edit button on event hover */
 .calendar-wrapper .fc-event:hover .event-edit-button {
     display: flex;
 }

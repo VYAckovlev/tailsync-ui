@@ -146,6 +146,23 @@ const EventPopover = ({ isOpen, onClose, onSubmit, anchorPosition, eventType, in
                         </select>
                     );
                 }
+
+                // Generic select field (for recurrence and other selects)
+                if (field.options) {
+                    return (
+                        <select
+                            {...commonProps}
+                            value={formData[field.name] || field.defaultValue || ''}
+                        >
+                            {field.options.map(option => (
+                                <option key={option.value} value={option.value}>
+                                    {option.label}
+                                </option>
+                            ))}
+                        </select>
+                    );
+                }
+
                 return null;
 
             case 'textarea':

@@ -25,7 +25,9 @@ const CalendarGroup = ({ title, children, onPlusClick }) => {
             </div>
 
             <div className={`group-content ${isOpen ? 'open' : ''}`}>
-                {children}
+                <div>
+                    {children}
+                </div>
             </div>
         </div>
     );

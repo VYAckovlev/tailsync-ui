@@ -4,7 +4,9 @@ const CALENDAR_ENDPOINTS = {
     CREATE: '/calendar',
     LIST: '/calendar',
     UPDATE: '/calendar/:id',
-    DELETE: '/calendar/:id'
+    DELETE: '/calendar/:id',
+    SHARE: '/calendar/:id/share',
+    LEAVE: '/calendar/:id/leave'
 };
 
 export const calendarApi = {
@@ -32,6 +34,26 @@ export const calendarApi = {
     async deleteCalendar(id) {
         const response = await apiClient.delete(
             CALENDAR_ENDPOINTS.DELETE.replace(':id', id)
+        );
+        return response.data;
+    },
+
+    async shareCalendar(calendarId, shareData) {
+        try {
+            const response = await apiClient.post(
+                CALENDAR_ENDPOINTS.SHARE.replace(':id', calendarId),
+                shareData
+            );
+            return response.data;
+        } catch (error) {
+            console.error('Error sharing calendar:', error);
+            throw error;
+        }
+    },
+
+    async leaveCalendar(id) {
+        const response = await apiClient.delete(
+            CALENDAR_ENDPOINTS.LEAVE.replace(':id', id)
         );
         return response.data;
     }

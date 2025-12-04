@@ -12,10 +12,10 @@ export const userApi = {
         return response.data;
     },
 
-    async updatePassword(old_password, new_password) {
+    async updatePassword(old_password, password) {
         const response = await apiClient.patch(USER_ENDPOINTS.PASSWORD_CHANGE, {
             old_password,
-            new_password
+            password
         });
         return response.data;
     },

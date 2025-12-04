@@ -374,7 +374,6 @@
   color: var(--tailsync-orange-start);
 }
 
-/* Calendar Navigation */
 .header-navigation {
   display: flex;
   align-items: center;
