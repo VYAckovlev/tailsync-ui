@@ -1,10 +1,10 @@
 import { apiClient } from "./api.js";
 
 const EVENT_ENDPOINTS = {
-    CREATE: '/event',
+    CREATE: '/events',
     GET_ALL: '/events',
-    UPDATE: '/event/:id',
-    DELETE: '/event/:id'
+    UPDATE: '/events/:id',
+    DELETE: '/events/:id'
 }
 
 export const eventApi = {
@@ -13,7 +13,7 @@ export const eventApi = {
             title: eventData.title,
             type: eventData.type,
             color: eventData.color,
-            calendar_id: eventData.calendarId,
+            calendar: eventData.calendarId,
             description: eventData.description,
         };
 

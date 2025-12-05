@@ -22,7 +22,7 @@ export const useEventCreation = () => {
     const fetchEvents = async () => {
         try {
             const response = await eventApi.getAllEvents();
-            setEvents(response.data || []);
+            setEvents(response.data.events || []);
         } catch (error) {
             console.error('Failed to fetch events:', error);
         }
