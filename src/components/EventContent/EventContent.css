@@ -13,11 +13,31 @@
     margin-right: 4px;
 }
 
+.event-title-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    overflow: hidden;
+}
+
+.event-type-icon {
+    flex-shrink: 0;
+    width: 14px;
+    height: 14px;
+    opacity: 0.9;
+}
+
 .event-title {
     font-size: 12px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    flex: 1;
+}
+
+.custom-event-content.completed .event-title {
+    text-decoration: line-through;
+    opacity: 0.6;
 }
 
 .event-edit-button {

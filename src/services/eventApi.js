@@ -1,10 +1,11 @@
 import { apiClient } from "./api.js";
 
 const EVENT_ENDPOINTS = {
-    CREATE: '/event',
+    CREATE: '/events',
     GET_ALL: '/events',
-    UPDATE: '/event/:id',
-    DELETE: '/event/:id'
+    GET_BY_CALENDAR: '/calendar/:calendarId/events/:type/:year/:month',
+    UPDATE: '/events/:id',
+    DELETE: '/events/:id'
 }
 
 export const eventApi = {
@@ -13,25 +14,24 @@ export const eventApi = {
             title: eventData.title,
             type: eventData.type,
             color: eventData.color,
-            calendar_id: eventData.calendarId,
+            calendar: eventData.calendarId,
             description: eventData.description,
         };
 
         if (eventData.start) {
             payload.start = eventData.start;
         }
-
-        if (eventData.end) {
+        
+        if (eventData.end && (eventData.type === 'arrangement')) {
             payload.end = eventData.end;
         }
-
-        if (eventData.location) {
+        
+        if (eventData.location && eventData.type === 'arrangement') {
             payload.location = eventData.location;
         }
-
-        // Add recurrence (only if not empty)
+        
         if (eventData.recurrence && eventData.recurrence !== '') {
-            payload.recurrence = eventData.recurrence;
+            payload.rrule = eventData.recurrence;
         }
 
         const response = await apiClient.post(EVENT_ENDPOINTS.CREATE, payload);
@@ -43,9 +43,55 @@ export const eventApi = {
         return response.data;
     },
 
+    async getEventsByCalendar(calendarId, type, year, month) {
+        let endpoint = EVENT_ENDPOINTS.GET_BY_CALENDAR
+            .replace(':calendarId', calendarId)
+            .replace(':type', type);
+        
+        if (year && month) {
+            endpoint = endpoint
+                .replace(':year', year)
+                .replace(':month', month);
+        } else {
+            endpoint = endpoint
+                .replace('/:year/:month', '');
+        }
+
+        const response = await apiClient.get(endpoint);
+        return response.data;
+    },
+
     async updateEvent(id, eventData) {
+        const payload = {
+            title: eventData.title,
+            type: eventData.type,
+            color: eventData.color,
+            calendar: eventData.calendarId,
+            description: eventData.description,
+        };
+
+        if (eventData.start) {
+            payload.start = eventData.start;
+        }
+
+        if (eventData.end && (eventData.type === 'arrangement' || eventData.type === 'holiday')) {
+            payload.end = eventData.end;
+        }
+
+        if (eventData.location && eventData.type === 'arrangement') {
+            payload.location = eventData.location;
+        }
+
+        if (eventData.type === 'task' && eventData.completed !== undefined) {
+            payload.completed = eventData.completed;
+        }
+
+        if (eventData.recurrence !== undefined) {
+            payload.rrule = eventData.recurrence || null;
+        }
+
         const response = await apiClient.patch(
-            EVENT_ENDPOINTS.UPDATE.replace(':id', id), eventData);
+            EVENT_ENDPOINTS.UPDATE.replace(':id', id), payload);
         return response.data;
     },
 

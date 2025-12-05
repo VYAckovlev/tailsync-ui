@@ -57,6 +57,8 @@ const EventDetailsPopover = ({
             start: event.start ? formatForInput(event.start, isAllDay) : '',
             end: event.end ? formatForInput(event.end, isAllDay) : '',
             link: event.link || '',
+            completed: event.completed || false,
+            recurrence: event.recurrence || '',
         });
     };
 
@@ -162,6 +164,23 @@ const EventDetailsPopover = ({
                         </select>
                     );
                 }
+
+                // Generic select field (for recurrence and other selects)
+                if (field.options) {
+                    return (
+                        <select
+                            {...commonProps}
+                            value={formData[field.name] || field.defaultValue || ''}
+                        >
+                            {field.options.map(option => (
+                                <option key={option.value} value={option.value}>
+                                    {option.label}
+                                </option>
+                            ))}
+                        </select>
+                    );
+                }
+
                 return null;
 
             case 'textarea':
@@ -229,7 +248,13 @@ const EventDetailsPopover = ({
             <form onSubmit={handleSubmit} className="event-form">
                 {ungrouped.map(field => {
                     const isAllDay = formData.isAllDay || false;
+
                     if (field.name === 'end' && isAllDay) {
+                        return null;
+                    }
+
+                    // Show 'completed' field only for task events
+                    if (field.name === 'completed' && eventType !== 'task') {
                         return null;
                     }
 

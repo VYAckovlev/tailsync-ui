@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { eventApi } from '../services/eventApi.js';
+import { useCalendar } from '../context/CalendarContext.jsx';
 import toast from 'react-hot-toast';
 
 export const useEventCreation = () => {
+    const { calendars, currentDate } = useCalendar();
     const [isEventPopoverOpen, setIsEventPopoverOpen] = useState(false);
     const [popoverAnchorPosition, setPopoverAnchorPosition] = useState({ x: 0, y: 0 });
     const [selectedDate, setSelectedDate] = useState(null);
@@ -14,17 +16,59 @@ export const useEventCreation = () => {
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [eventDetailsPosition, setEventDetailsPosition] = useState({ x: 0, y: 0 });
 
+    const currentYear = useMemo(() => currentDate.getFullYear(), [currentDate]);
+    const currentMonth = useMemo(() => currentDate.getMonth() + 1, [currentDate]);
 
     useEffect(() => {
         fetchEvents();
-    }, [shouldRefreshEvents]);
+    }, [shouldRefreshEvents, calendars, currentYear, currentMonth]);
 
     const fetchEvents = async () => {
         try {
-            const response = await eventApi.getAllEvents();
-            setEvents(response.data || []);
+            const visibleCalendars = calendars.filter(cal => cal.visible);
+
+            if (visibleCalendars.length === 0) {
+                setEvents([]);
+                return;
+            }
+
+            const eventPromises = visibleCalendars.map(calendar =>
+                eventApi.getEventsByCalendar(calendar.id, 'all', currentYear, currentMonth)
+                    .catch(error => {
+                        console.error(`Failed to fetch events for calendar ${calendar.id}:`, error);
+                        return { data: { events: [] } };
+                    })
+            );
+
+            const responses = await Promise.all(eventPromises);
+            const allEvents = responses.flatMap(response => response.data.events || []);
+
+            const transformedEvents = allEvents.map(event => {
+                const transformed = { ...event };
+
+                if (event.calendar) {
+                    transformed.calendar_id = event.calendar;
+                }
+
+                if (event.rrule) {
+                    transformed.recurrence = event.rrule;
+                }
+
+                if (event.type === 'holiday' && !event.color) {
+                    transformed.color = '#fb8c00';
+                }
+
+                if (event.color && !event.backgroundColor) {
+                    transformed.backgroundColor = event.color;
+                }
+
+                return transformed;
+            });
+
+            setEvents(transformedEvents);
         } catch (error) {
             console.error('Failed to fetch events:', error);
+            setEvents([]);
         }
     };
 
@@ -98,6 +142,7 @@ export const useEventCreation = () => {
 
     const openEventDetails = (eventInfo, position) => {
         const event = eventInfo.event;
+        const eventType = event.extendedProps?.type || 'arrangement';
 
         const eventData = {
             id: event.id,
@@ -107,11 +152,13 @@ export const useEventCreation = () => {
             allDay: event.allDay,
             backgroundColor: event.backgroundColor,
             color: event.backgroundColor,
-            type: event.extendedProps?.type || 'arrangement',
+            type: eventType,
             description: event.extendedProps?.description || '',
             location: event.extendedProps?.location || '',
-            calendarId: event.extendedProps?.calendar_id || event.extendedProps?.calendarId || '',
+            calendarId: event.extendedProps?.calendar || event.extendedProps?.calendar_id || '',
             link: event.extendedProps?.link || '',
+            completed: eventType === 'task' ? (event.extendedProps?.completed || false) : undefined,
+            recurrence: event.extendedProps?.rrule || '',
         };
 
         setSelectedEvent(eventData);
@@ -121,31 +168,7 @@ export const useEventCreation = () => {
 
     const handleEventUpdate = async (eventId, eventData) => {
         try {
-            const payload = {
-                title: eventData.title,
-                type: eventData.type,
-                color: eventData.color,
-                calendar_id: eventData.calendarId,
-                description: eventData.description,
-            };
-
-            if (eventData.start) {
-                payload.start = eventData.start;
-            }
-
-            if (eventData.end) {
-                payload.end = eventData.end;
-            }
-
-            if (eventData.location) {
-                payload.location = eventData.location;
-            }
-
-            if (eventData.link) {
-                payload.link = eventData.link;
-            }
-
-            await eventApi.updateEvent(eventId, payload);
+            await eventApi.updateEvent(eventId, eventData);
             toast.success('Event updated successfully');
             setIsEventDetailsPopoverOpen(false);
             setShouldRefreshEvents(prev => prev + 1);
@@ -178,6 +201,10 @@ export const useEventCreation = () => {
         setSelectedEvent(null);
     };
 
+    const refreshEvents = () => {
+        setShouldRefreshEvents(prev => prev + 1);
+    };
+
     return {
         isEventPopoverOpen,
         popoverAnchorPosition,
@@ -185,6 +212,7 @@ export const useEventCreation = () => {
         eventType,
 
         events,
+        refreshEvents,
 
         handleDateClick,
         handleEventClick,

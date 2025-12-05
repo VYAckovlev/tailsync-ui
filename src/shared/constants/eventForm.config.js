@@ -1,7 +1,8 @@
 export const EVENT_TYPES = {
     ARRANGEMENT: 'arrangement',
     REMINDER: 'reminder',
-    TASK: 'task'
+    TASK: 'task',
+    HOLIDAY: 'holiday'
 };
 
 export const RECURRENCE_OPTIONS = [
@@ -103,6 +104,35 @@ export const EVENT_FORM_CONFIGS = {
         fields: [
             ...baseFields.slice(0, 2),
             { name: "start", label: "Due Date", type: "datetime-local", required: true },
+            recurrenceField,
+            ...baseFields.slice(2),
+            {
+                name: "completed",
+                label: "Mark as completed",
+                type: "checkbox",
+                required: false,
+                defaultValue: false,
+                editOnly: true
+            }
+        ]
+    },
+    [EVENT_TYPES.HOLIDAY]: {
+        label: "Holiday",
+        color: "#fb8c00",
+        fields: [
+            ...baseFields.slice(0, 2),
+            {
+                name: "start",
+                label: "Start Date",
+                type: "datetime-local",
+                required: true
+            },
+            {
+                name: "end",
+                label: "End Date",
+                type: "datetime-local",
+                required: false
+            },
             recurrenceField,
             ...baseFields.slice(2)
         ]

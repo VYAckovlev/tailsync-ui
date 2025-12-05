@@ -32,7 +32,7 @@ export const CalendarProvider = ({ children }) => {
             setLoading(true);
             try {
                 const res = await calendarApi.getCalendars();
-                const transformedCalendars = res.data.map(transformCalendar);
+                const transformedCalendars = res.data.calendars.map(transformCalendar);
                 setCalendars(transformedCalendars);
             } catch (error) {
                 console.error('Failed to fetch calendars:', error);
@@ -59,7 +59,7 @@ export const CalendarProvider = ({ children }) => {
         setLoading(true);
         try {
             const res = await calendarApi.getCalendars();
-            const transformedCalendars = res.data.map(transformCalendar);
+            const transformedCalendars = res.data.calendars.map(transformCalendar);
             setCalendars(transformedCalendars);
         } catch (error) {
             console.error('Failed to refresh calendars:', error);

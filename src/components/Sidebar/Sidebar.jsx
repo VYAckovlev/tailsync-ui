@@ -13,7 +13,7 @@ import { calendarApi } from "../../services/calendarApi.js";
 import { eventApi } from "../../services/eventApi.js";
 
 const Sidebar = () => {
-    const { myCalendars, otherCalendars } = useCalendar();
+    const { myCalendars, otherCalendars, refreshCalendars } = useCalendar();
     const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [isCalendarPopoverOpen, setIsCalendarPopoverOpen] = useState(false);
     const [isEventPopoverOpen, setIsEventPopoverOpen] = useState(false);
@@ -46,9 +46,9 @@ const Sidebar = () => {
     const handleCalendarSubmit = async (calendarData) => {
         try {
             await calendarApi.createCalendar(calendarData);
-            console.log('Calendar created:', calendarData);
+            toast.success('Calendar created successfully');
             setIsCalendarPopoverOpen(false);
-            // TODO: Refresh calendar list when state management is implemented
+            await refreshCalendars();
         } catch (error) {
             console.error('Failed to create calendar:', error);
             toast.error('Failed to create calendar');

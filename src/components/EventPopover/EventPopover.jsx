@@ -231,23 +231,31 @@ const EventPopover = ({ isOpen, onClose, onSubmit, anchorPosition, eventType, in
             className="event-popover"
         >
             <div className="event-type-switcher">
-                {Object.entries(EVENT_TYPES).map(([key, type]) => (
-                    <button
-                        key={type}
-                        type="button"
-                        className={`event-type-button ${currentEventType === type ? 'active' : ''}`}
-                        onClick={() => handleEventTypeChange(type)}
-                        style={{
-                            '--event-color': EVENT_FORM_CONFIGS[type].color
-                        }}
-                    >
-                        {EVENT_FORM_CONFIGS[type].label}
-                    </button>
-                ))}
+                {Object.entries(EVENT_TYPES)
+                    .filter(([key, type]) => type !== 'holiday')
+                    .map(([key, type]) => (
+                        <button
+                            key={type}
+                            type="button"
+                            className={`event-type-button ${currentEventType === type ? 'active' : ''}`}
+                            onClick={() => handleEventTypeChange(type)}
+                            style={{
+                                '--event-color': EVENT_FORM_CONFIGS[type].color
+                            }}
+                        >
+                            {EVENT_FORM_CONFIGS[type].label}
+                        </button>
+                    ))}
             </div>
             <form onSubmit={handleSubmit} className="event-form">
                 {ungrouped.map(field => {
                     const isAllDay = formData.isAllDay || false;
+
+                    // Skip editOnly fields (like completed for tasks during creation)
+                    if (field.editOnly) {
+                        return null;
+                    }
+
                     if (field.name === 'end' && isAllDay) {
                         return null;
                     }
