@@ -2,26 +2,25 @@ import { useEffect, useState } from 'react';
 import useForm from '../../hooks/useForm.js';
 import FormPopover from '../FormPopover/FormPopover.jsx';
 import { EVENT_TYPES, EVENT_FORM_CONFIGS } from '../../shared/constants/eventForm.config.js';
-import { calendarApi } from '../../services/calendarApi.js';
+import { useCalendar } from '../../context/CalendarContext.jsx';
 import { formatForInput } from "../../utils/DateUtils.js";
 import './EventDetailsPopover.css';
 
 const EventDetailsPopover = ({
-    isOpen,
-    onClose,
-    onUpdate,
-    onDelete,
-    anchorPosition,
-    eventData
-}) => {
-    const [calendars, setCalendars] = useState([]);
-    const [isLoadingCalendars, setIsLoadingCalendars] = useState(true);
+                                 isOpen,
+                                 onClose,
+                                 onUpdate,
+                                 onDelete,
+                                 anchorPosition,
+                                 eventData
+                             }) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const { calendars } = useCalendar();
 
     const eventType = eventData?.type || EVENT_TYPES.ARRANGEMENT;
     const config = EVENT_FORM_CONFIGS[eventType] || EVENT_FORM_CONFIGS[EVENT_TYPES.ARRANGEMENT];
 
-    const { formData, setFormData, handleChange, handleSubmit, resetForm } = useForm(
+    const { formData, setFormData, handleChange, handleSubmit } = useForm(
         config.fields,
         async (data) => {
             setIsSubmitting(true);
@@ -31,11 +30,10 @@ const EventDetailsPopover = ({
                     type: eventType,
                     color: data.color || config.color
                 };
-
                 await onUpdate(eventData.id, updatedEventData);
+                onClose();
             } catch (error) {
                 console.error('Failed to update event:', error);
-                throw error;
             } finally {
                 setIsSubmitting(false);
             }
@@ -58,44 +56,52 @@ const EventDetailsPopover = ({
             end: event.end ? formatForInput(event.end, isAllDay) : '',
             link: event.link || '',
             completed: event.completed || false,
-            recurrence: event.recurrence || '',
+            recurrence: event.recurrence || 'none',
         });
     };
 
     useEffect(() => {
         if (isOpen && eventData) {
-            fetchCalendars();
             prefillEventData(eventData);
         }
     }, [isOpen, eventData]);
 
-    const fetchCalendars = async () => {
-        try {
-            setIsLoadingCalendars(true);
-            const response = await calendarApi.listCalendars();
-            const calendarList = response.data || [];
-            setCalendars(calendarList);
-        } catch (error) {
-            console.error('Failed to fetch calendars:', error);
-            setCalendars([]);
-        } finally {
-            setIsLoadingCalendars(false);
-        }
-    };
-
     const handleDelete = async () => {
-        if (!confirm('Are you sure you want to delete this event?')) {
-            return;
-        }
+        if (!confirm('Are you sure you want to delete this event?')) return;
 
         setIsSubmitting(true);
         try {
             await onDelete(eventData.id);
+            onClose();
         } catch (error) {
             console.error('Failed to delete event:', error);
         } finally {
             setIsSubmitting(false);
         }
+    };
+
+    const handleDateOrCheckboxChange = (e) => {
+        const { name, checked, value } = e.target;
+
+        if (name === 'isAllDay') {
+            setFormData(prev => ({
+                ...prev,
+                isAllDay: checked,
+                start: formatForInput(prev.start, checked),
+                end: formatForInput(prev.end, checked)
+            }));
+            return;
+        }
+
+        if (name === 'start') {
+            handleChange(e);
+            if (formData.end && value > formData.end) {
+                setFormData(prev => ({ ...prev, [name]: value, end: '' }));
+            }
+            return;
+        }
+
+        handleChange(e);
     };
 
     const renderField = (field) => {
@@ -104,30 +110,46 @@ const EventDetailsPopover = ({
             name: field.name,
             required: field.required,
             onChange: handleChange,
-            autoFocus: field.autoFocus
+            autoFocus: field.autoFocus,
+            value: formData[field.name] || ''
         };
 
         const isAllDay = formData.isAllDay || false;
 
         switch (field.type) {
             case 'text':
-                return (
-                    <input
-                        type="text"
-                        {...commonProps}
-                        placeholder={field.placeholder}
-                        value={formData[field.name] || ''}
-                        maxLength={100}
-                    />
-                );
+                return <input type="text" {...commonProps} placeholder={field.placeholder} maxLength={100} />;
 
+            case 'datetime':
             case 'datetime-local':
+            case 'date':
                 const inputType = isAllDay ? 'date' : 'datetime-local';
+                let minProp = undefined;
+                let maxProp = undefined;
+                let isDisabled = false;
+
+                if (field.name === 'end') {
+                    if (!formData.start) {
+                        isDisabled = true;
+                    } else {
+                        minProp = formData.start;
+                        const startDatePart = formData.start.split('T')[0];
+                        if (isAllDay) {
+                            maxProp = startDatePart;
+                        } else {
+                            maxProp = `${startDatePart}T23:59`;
+                        }
+                    }
+                }
+
                 return (
                     <input
                         type={inputType}
                         {...commonProps}
-                        value={formData[field.name] || ''}
+                        onChange={handleDateOrCheckboxChange}
+                        min={minProp}
+                        max={maxProp}
+                        disabled={isDisabled}
                     />
                 );
 
@@ -137,7 +159,9 @@ const EventDetailsPopover = ({
                         <input
                             type="checkbox"
                             {...commonProps}
+                            onChange={handleDateOrCheckboxChange}
                             checked={formData[field.name] || false}
+                            value={undefined}
                         />
                         <label htmlFor={commonProps.id} className="checkbox-label">
                             {field.label}
@@ -148,65 +172,35 @@ const EventDetailsPopover = ({
             case 'select':
                 if (field.name === 'calendarId') {
                     return (
-                        <select
-                            {...commonProps}
-                            value={formData[field.name] || ''}
-                            disabled={isLoadingCalendars}
-                        >
-                            <option value="" disabled>
-                                {isLoadingCalendars ? 'Loading calendars...' : field.placeholder}
-                            </option>
-                            {calendars.map(calendar => (
-                                <option key={calendar.id} value={calendar.id}>
-                                    {calendar.name}
-                                </option>
+                        <select {...commonProps} disabled={!calendars?.length}>
+                            <option value="" disabled>{field.placeholder}</option>
+                            {calendars?.map(c => (
+                                <option key={c.id} value={c.id}>{c.name}</option>
                             ))}
                         </select>
                     );
                 }
-
-                // Generic select field (for recurrence and other selects)
                 if (field.options) {
                     return (
-                        <select
-                            {...commonProps}
-                            value={formData[field.name] || field.defaultValue || ''}
-                        >
-                            {field.options.map(option => (
-                                <option key={option.value} value={option.value}>
-                                    {option.label}
-                                </option>
+                        <select {...commonProps}>
+                            {field.options.map(opt => (
+                                <option key={opt.value} value={opt.value}>{opt.label}</option>
                             ))}
                         </select>
                     );
                 }
-
                 return null;
 
             case 'textarea':
-                return (
-                    <textarea
-                        {...commonProps}
-                        placeholder={field.placeholder}
-                        value={formData[field.name] || ''}
-                        rows={3}
-                        maxLength={500}
-                    />
-                );
+                return <textarea {...commonProps} placeholder={field.placeholder} rows={3} maxLength={500} />;
 
             case 'color':
-                const selectedColor = formData[field.name] || config.color;
                 return (
                     <input
                         type="color"
                         className="custom-color-input"
-                        value={selectedColor}
-                        onChange={(e) => {
-                            setFormData(prev => ({
-                                ...prev,
-                                [field.name]: e.target.value
-                            }));
-                        }}
+                        value={formData[field.name] || config.color}
+                        onChange={handleChange}
                     />
                 );
 
@@ -215,27 +209,7 @@ const EventDetailsPopover = ({
         }
     };
 
-    const groupFields = (fields) => {
-        const grouped = {};
-        const ungrouped = [];
-
-        fields.forEach(field => {
-            if (field.group) {
-                if (!grouped[field.group]) {
-                    grouped[field.group] = [];
-                }
-                grouped[field.group].push(field);
-            } else {
-                ungrouped.push(field);
-            }
-        });
-
-        return { grouped, ungrouped };
-    };
-
     if (!eventData) return null;
-
-    const { grouped, ungrouped } = groupFields(config.fields);
 
     return (
         <FormPopover
@@ -246,60 +220,51 @@ const EventDetailsPopover = ({
             className="event-details-popover"
         >
             <form onSubmit={handleSubmit} className="event-form">
-                {ungrouped.map(field => {
+                {config.fields.map((field, index) => {
                     const isAllDay = formData.isAllDay || false;
 
-                    if (field.name === 'end' && isAllDay) {
+                    if (field.name === 'end' && (isAllDay || eventType === 'reminder' || eventType === 'task')) {
                         return null;
                     }
+                    if (field.name === 'completed' && eventType !== 'task') return null;
 
-                    // Show 'completed' field only for task events
-                    if (field.name === 'completed' && eventType !== 'task') {
-                        return null;
-                    }
+                    if (field.group) {
+                        const prevField = config.fields[index - 1];
+                        if (prevField && prevField.group === field.group) return null;
 
-                    if (field.type === 'checkbox') {
+                        const groupFields = config.fields.filter(f => f.group === field.group);
+
                         return (
-                            <div key={field.name} className="form-field checkbox-field">
-                                {renderField(field)}
+                            <div key={field.group} className="form-row date-row">
+                                {groupFields.map(gf => {
+                                    if (gf.name === 'end' && (isAllDay || eventType === 'reminder' || eventType === 'task')) {
+                                        return null;
+                                    }
+                                    return (
+                                        <div key={gf.name} className="form-field">
+                                            <label htmlFor={`event-${gf.name}`}>{gf.label}</label>
+                                            {renderField(gf)}
+                                        </div>
+                                    );
+                                })}
                             </div>
                         );
                     }
 
                     return (
-                        <div key={field.name} className="form-field">
-                            <label htmlFor={`event-${field.name}`}>{field.label}</label>
+                        <div key={field.name} className={`form-field ${field.type === 'checkbox' ? 'checkbox-field' : ''}`}>
+                            {field.type !== 'checkbox' && <label htmlFor={`event-${field.name}`}>{field.label}</label>}
                             {renderField(field)}
                         </div>
                     );
                 })}
 
-                {Object.entries(grouped).map(([groupName, fields]) => (
-                    <div key={groupName} className={`form-row ${groupName}`}>
-                        {fields.map(field => (
-                            <div key={field.name} className="form-field">
-                                <label htmlFor={`event-${field.name}`}>{field.label}</label>
-                                {renderField(field)}
-                            </div>
-                        ))}
-                    </div>
-                ))}
-
                 <div className="form-actions">
-                    <button
-                        type="button"
-                        onClick={handleDelete}
-                        className="delete-button"
-                        disabled={isSubmitting}
-                    >
-                        Delete Event
+                    <button type="button" onClick={handleDelete} className="delete-button" disabled={isSubmitting}>
+                        Delete
                     </button>
-                    <button
-                        type="submit"
-                        className="primary-button"
-                        disabled={isSubmitting}
-                    >
-                        {isSubmitting ? 'Updating...' : 'Update Event'}
+                    <button type="submit" className="primary-button" disabled={isSubmitting}>
+                        {isSubmitting ? 'Saving...' : 'Save'}
                     </button>
                 </div>
             </form>

@@ -20,7 +20,6 @@ const EventPopover = ({ isOpen, onClose, onSubmit, anchorPosition, eventType, in
                 type: currentEventType,
                 color: data.color || config.color
             };
-
             await onSubmit(eventData);
             resetForm();
             onClose();
@@ -38,7 +37,7 @@ const EventPopover = ({ isOpen, onClose, onSubmit, anchorPosition, eventType, in
             startValue = formatForInput(date, false);
         }
 
-        let endValue;
+        let endValue = '';
         if (!isAllDayEvent) {
             const endDate = new Date(date);
             endDate.setHours(endDate.getHours() + 1);
@@ -48,7 +47,7 @@ const EventPopover = ({ isOpen, onClose, onSubmit, anchorPosition, eventType, in
         setFormData(prev => ({
             ...prev,
             start: startValue,
-            end: endValue || '',
+            end: endValue,
             isAllDay: isAllDayEvent
         }));
     };
@@ -58,12 +57,7 @@ const EventPopover = ({ isOpen, onClose, onSubmit, anchorPosition, eventType, in
             setCurrentEventType(eventType);
             resetForm();
 
-            if (!formData.color) {
-                setFormData(prev => ({
-                    ...prev,
-                    color: config.color
-                }));
-            }
+            setFormData(prev => ({ ...prev, color: config.color }));
 
             if (initialDate) {
                 prefillDateFields(initialDate);
@@ -73,12 +67,23 @@ const EventPopover = ({ isOpen, onClose, onSubmit, anchorPosition, eventType, in
 
     useEffect(() => {
         if (calendars.length > 0 && !formData.calendarId) {
-            setFormData(prev => ({
-                ...prev,
-                calendarId: calendars[0].id
-            }));
+            setFormData(prev => ({ ...prev, calendarId: calendars[0].id }));
         }
-    }, [calendars, formData.calendarId]);
+    }, [calendars, formData.calendarId, isOpen]);
+
+    const handleAllDayChange = (e) => {
+        const { checked } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            isAllDay: checked,
+            start: formatForInput(prev.start, checked),
+            end: formatForInput(prev.end, checked)
+        }));
+    };
+
+    const handleEventTypeChange = (newType) => {
+        setCurrentEventType(newType);
+    };
 
     const renderField = (field) => {
         const commonProps = {
@@ -86,40 +91,54 @@ const EventPopover = ({ isOpen, onClose, onSubmit, anchorPosition, eventType, in
             name: field.name,
             required: field.required,
             onChange: handleChange,
-            autoFocus: field.autoFocus
+            autoFocus: field.autoFocus,
+            value: formData[field.name] || ''
         };
 
         const isAllDay = formData.isAllDay || false;
 
         switch (field.type) {
             case 'text':
-                return (
-                    <input
-                        type="text"
-                        {...commonProps}
-                        placeholder={field.placeholder}
-                        value={formData[field.name] || ''}
-                        maxLength={100}
-                    />
-                );
+                return <input type="text" {...commonProps} placeholder={field.placeholder} maxLength={100} />;
 
+            case 'datetime':
             case 'datetime-local':
+            case 'date':
                 const inputType = isAllDay ? 'date' : 'datetime-local';
+                let minProp = undefined;
+                let maxProp = undefined;
+                let isDisabled = false;
+
+                if (field.name === 'end') {
+                    if (!formData.start) {
+                        isDisabled = true;
+                    } else {
+                        minProp = formData.start;
+                        const startDatePart = formData.start.split('T')[0];
+                        maxProp = isAllDay ? startDatePart : `${startDatePart}T23:59`;
+                    }
+                }
+
                 return (
                     <input
                         type={inputType}
                         {...commonProps}
-                        value={formData[field.name] || ''}
+                        min={minProp}
+                        max={maxProp}
+                        disabled={isDisabled}
                     />
                 );
 
             case 'checkbox':
+                const isAllDayField = field.name === 'isAllDay';
                 return (
                     <div className="checkbox-wrapper">
                         <input
                             type="checkbox"
                             {...commonProps}
+                            onChange={isAllDayField ? handleAllDayChange : handleChange}
                             checked={formData[field.name] || false}
+                            value={undefined}
                         />
                         <label htmlFor={commonProps.id} className="checkbox-label">
                             {field.label}
@@ -130,67 +149,26 @@ const EventPopover = ({ isOpen, onClose, onSubmit, anchorPosition, eventType, in
             case 'select':
                 if (field.name === 'calendarId') {
                     return (
-                        <select
-                            {...commonProps}
-                            value={formData[field.name] || ''}
-                            disabled={isLoadingCalendars}
-                        >
-                            <option value="" disabled>
-                                {isLoadingCalendars ? 'Loading calendars...' : field.placeholder}
-                            </option>
-                            {calendars.map(calendar => (
-                                <option key={calendar.id} value={calendar.id}>
-                                    {calendar.name}
-                                </option>
-                            ))}
+                        <select {...commonProps} disabled={isLoadingCalendars}>
+                            <option value="" disabled>{isLoadingCalendars ? 'Loading...' : field.placeholder}</option>
+                            {calendars.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                         </select>
                     );
                 }
-
-                // Generic select field (for recurrence and other selects)
                 if (field.options) {
                     return (
-                        <select
-                            {...commonProps}
-                            value={formData[field.name] || field.defaultValue || ''}
-                        >
-                            {field.options.map(option => (
-                                <option key={option.value} value={option.value}>
-                                    {option.label}
-                                </option>
-                            ))}
+                        <select {...commonProps}>
+                            {field.options.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                         </select>
                     );
                 }
-
                 return null;
 
             case 'textarea':
-                return (
-                    <textarea
-                        {...commonProps}
-                        placeholder={field.placeholder}
-                        value={formData[field.name] || ''}
-                        rows={3}
-                        maxLength={500}
-                    />
-                );
+                return <textarea {...commonProps} placeholder={field.placeholder} rows={3} maxLength={500} />;
 
             case 'color':
-                const selectedColor = formData[field.name] || config.color;
-                return (
-                    <input
-                        type="color"
-                        className="custom-color-input"
-                        value={selectedColor}
-                        onChange={(e) => {
-                            setFormData(prev => ({
-                                ...prev,
-                                [field.name]: e.target.value
-                            }));
-                        }}
-                    />
-                );
+                return <input type="color" {...commonProps} className="custom-color-input" />;
 
             default:
                 return null;
@@ -200,24 +178,15 @@ const EventPopover = ({ isOpen, onClose, onSubmit, anchorPosition, eventType, in
     const groupFields = (fields) => {
         const grouped = {};
         const ungrouped = [];
-
         fields.forEach(field => {
             if (field.group) {
-                if (!grouped[field.group]) {
-                    grouped[field.group] = [];
-                }
+                if (!grouped[field.group]) grouped[field.group] = [];
                 grouped[field.group].push(field);
             } else {
                 ungrouped.push(field);
             }
         });
-
         return { grouped, ungrouped };
-    };
-
-    const handleEventTypeChange = (newType) => {
-        setCurrentEventType(newType);
-        resetForm();
     };
 
     const { grouped, ungrouped } = groupFields(config.fields);
@@ -232,31 +201,27 @@ const EventPopover = ({ isOpen, onClose, onSubmit, anchorPosition, eventType, in
         >
             <div className="event-type-switcher">
                 {Object.entries(EVENT_TYPES)
-                    .filter(([key, type]) => type !== 'holiday')
-                    .map(([key, type]) => (
+                    .filter(([_, type]) => type !== 'holiday')
+                    .map(([_, type]) => (
                         <button
                             key={type}
                             type="button"
                             className={`event-type-button ${currentEventType === type ? 'active' : ''}`}
                             onClick={() => handleEventTypeChange(type)}
-                            style={{
-                                '--event-color': EVENT_FORM_CONFIGS[type].color
-                            }}
+                            style={{ '--event-color': EVENT_FORM_CONFIGS[type].color }}
                         >
                             {EVENT_FORM_CONFIGS[type].label}
                         </button>
                     ))}
             </div>
+
             <form onSubmit={handleSubmit} className="event-form">
                 {ungrouped.map(field => {
                     const isAllDay = formData.isAllDay || false;
 
-                    // Skip editOnly fields (like completed for tasks during creation)
-                    if (field.editOnly) {
-                        return null;
-                    }
+                    if (field.editOnly) return null;
 
-                    if (field.name === 'end' && isAllDay) {
+                    if (field.name === 'end' && (isAllDay || currentEventType === 'reminder' || currentEventType === 'task')) {
                         return null;
                     }
 
@@ -278,12 +243,18 @@ const EventPopover = ({ isOpen, onClose, onSubmit, anchorPosition, eventType, in
 
                 {Object.entries(grouped).map(([groupName, fields]) => (
                     <div key={groupName} className={`form-row ${groupName}`}>
-                        {fields.map(field => (
-                            <div key={field.name} className="form-field">
-                                <label htmlFor={`event-${field.name}`}>{field.label}</label>
-                                {renderField(field)}
-                            </div>
-                        ))}
+                        {fields.map(field => {
+                            const isAllDay = formData.isAllDay || false;
+                            if (field.name === 'end' && (isAllDay || currentEventType === 'reminder' || currentEventType === 'task')) {
+                                return null;
+                            }
+                            return (
+                                <div key={field.name} className="form-field">
+                                    <label htmlFor={`event-${field.name}`}>{field.label}</label>
+                                    {renderField(field)}
+                                </div>
+                            );
+                        })}
                     </div>
                 ))}
 

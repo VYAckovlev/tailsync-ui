@@ -9,6 +9,8 @@ import './EventContent.css';
 const EventContent = ({ eventInfo, onEditClick }) => {
     const eventType = eventInfo.event.extendedProps?.type || 'arrangement';
     const isCompleted = eventInfo.event.extendedProps?.completed || false;
+    const isStartDay = eventInfo.isStart;
+    const isDayGridView = eventInfo.view.type.includes('dayGrid');
 
     const handleEditClick = (e) => {
         e.stopPropagation();
@@ -30,6 +32,20 @@ const EventContent = ({ eventInfo, onEditClick }) => {
                 return <ArrangementIcon className="event-type-icon" />;
         }
     };
+
+    if (!isStartDay && isDayGridView) {
+        return (
+            <div
+                className="event-badge"
+                title={`${eventInfo.event.title} (click to edit)`}
+                onClick={handleEditClick}
+                style={{ cursor: 'pointer', width: '100%', height: '100%' }}
+            >
+                <div className="badge-indicator" />
+                <span className="badge-title">{eventInfo.event.title}</span>
+            </div>
+        );
+    }
 
     return (
         <div className={`custom-event-content ${eventType === 'task' && isCompleted ? 'completed' : ''}`}>

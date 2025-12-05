@@ -22,31 +22,6 @@ const CalendarWeek = () => {
     const nextWeek = new Date(today);
     nextWeek.setDate(nextWeek.getDate() + 7);
 
-    const MOCK_EVENTS = [
-        {
-            id: '1',
-            title: 'first event',
-            start: today.toISOString().split('T')[0] + 'T10:00:00',
-            end: today.toISOString().split('T')[0] + 'T11:30:00',
-            color: '#2563eb'
-        },
-        {
-            id: '2',
-            title: 'second event',
-            start: tomorrow.toISOString().split('T')[0] + 'T14:00:00',
-            end: tomorrow.toISOString().split('T')[0] + 'T15:00:00',
-            color: '#dc2626'
-        },
-        {
-            id: '3',
-            title: 'Some event for 3 days',
-            start: nextWeek.toISOString().split('T')[0] + 'T09:00:00',
-            end: new Date(nextWeek.setDate(nextWeek.getDate() + 3)).toISOString().split('T')[0] + 'T17:00:00',
-            color: '#16a34a'
-        }
-    ];
-
-    const displayEvents = events?.length > 0 ? events : MOCK_EVENTS;
 
     const handleDatesSet = (dateInfo) => {
         updateDate(dateInfo.view.currentStart);
@@ -57,7 +32,7 @@ const CalendarWeek = () => {
             <Calendar
                 ref={calendarRef}
                 view="timeGridWeek"
-                events={displayEvents}
+                events={events}
                 onDateClick={handleDateClick}
                 onEventClick={handleEventClick}
                 eventContent={renderEventContent}

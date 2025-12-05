@@ -83,7 +83,8 @@ export const EVENT_FORM_CONFIGS = {
                 name: "location",
                 label: "Link to meet",
                 type: "text",
-                placeholder: "Add link to meet"
+                placeholder: "Add link to meet",
+                required: true
             },
             ...baseFields.slice(2)
         ]
