@@ -1,12 +1,12 @@
 import { apiClient } from './api';
 
 const CALENDAR_ENDPOINTS = {
-    CREATE: '/calendar',
+    CREATE: '/calendars',
     GET: '/calendars',
-    UPDATE: '/calendar/:id',
-    DELETE: '/calendar/:id',
-    SHARE: '/calendar/:id/share',
-    LEAVE: '/calendar/:id/leave'
+    UPDATE: '/calendars/:id',
+    DELETE: '/calendars/:id',
+    SHARE: '/calendars/:id/share',
+    LEAVE: '/calendars/:id/leave'
 };
 
 export const calendarApi = {
