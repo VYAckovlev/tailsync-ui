@@ -7,7 +7,7 @@ import './CalendarDay.css';
 const CalendarDay = () => {
     const calendarRef = useRef(null);
     const { registerCalendarRef, updateDate } = useCalendar();
-    const { events, handleDateClick, handleEventClick, renderEventContent } = useEvents();
+    const { events, handleDateClick, handleEventClick, handleEventDrop, renderEventContent } = useEvents();
 
     useEffect(() => {
         if (calendarRef.current) {
@@ -20,32 +20,6 @@ const CalendarDay = () => {
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    const MOCK_EVENTS = [
-        {
-            id: '1',
-            title: 'Morning Meeting',
-            start: `${today.toISOString().split('T')[0]}T09:00:00`,
-            end: `${today.toISOString().split('T')[0]}T10:00:00`,
-            color: '#2563eb'
-        },
-        {
-            id: '2',
-            title: 'Lunch Break',
-            start: `${today.toISOString().split('T')[0]}T12:00:00`,
-            end: `${today.toISOString().split('T')[0]}T13:00:00`,
-            color: '#16a34a'
-        },
-        {
-            id: '3',
-            title: 'Project Review',
-            start: `${today.toISOString().split('T')[0]}T15:00:00`,
-            end: `${today.toISOString().split('T')[0]}T16:30:00`,
-            color: '#dc2626'
-        }
-    ];
-
-    const displayEvents = events?.length > 0 ? events : MOCK_EVENTS;
-
     const handleDatesSet = (dateInfo) => {
         updateDate(dateInfo.view.currentStart);
     };
@@ -55,7 +29,7 @@ const CalendarDay = () => {
             <Calendar
                 ref={calendarRef}
                 view="timeGridDay"
-                events={displayEvents}
+                events={events}
                 onDateClick={handleDateClick}
                 onEventClick={handleEventClick}
                 eventContent={renderEventContent}
@@ -70,9 +44,11 @@ const CalendarDay = () => {
                         hour: 'numeric',
                         minute: '2-digit',
                     },
+                    allDaySlot: false,
                     scrollTime: '08:00:00',
                     scrollTimeReset: false,
-                    nowIndicator: true
+                    nowIndicator: true,
+                    eventDrop: handleEventDrop
                 }}
             />
         </div>

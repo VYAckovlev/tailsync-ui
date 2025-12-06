@@ -7,7 +7,7 @@ import './CalendarMonth.css';
 const CalendarMonth = () => {
     const calendarRef = useRef(null);
     const { registerCalendarRef, updateDate } = useCalendar();
-    const { events, handleDateClick, handleEventClick, renderEventContent } = useEvents();
+    const { events, handleDateClick, handleEventClick, handleEventDrop, renderEventContent } = useEvents();
 
     useEffect(() => {
         if (calendarRef.current) {
@@ -30,6 +30,9 @@ const CalendarMonth = () => {
                 onEventClick={handleEventClick}
                 eventContent={renderEventContent}
                 onDatesSet={handleDatesSet}
+                extraOptions={{
+                    eventDrop: handleEventDrop
+                }}
             />
         </div>
     );

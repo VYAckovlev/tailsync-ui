@@ -7,7 +7,7 @@ import './CalendarWeek.css';
 const CalendarWeek = () => {
     const calendarRef = useRef(null);
     const { registerCalendarRef, updateDate } = useCalendar();
-    const { events, handleDateClick, handleEventClick, renderEventContent } = useEvents();
+    const { events, handleDateClick, handleEventClick, handleEventDrop, renderEventContent } = useEvents();
 
     useEffect(() => {
         if (calendarRef.current) {
@@ -48,9 +48,10 @@ const CalendarWeek = () => {
                         minute: '2-digit',
                         meridiem: 'short'
                     },
-                    allDaySlot: true,
+                    allDaySlot: false,
                     nowIndicator: true,
-                    scrollTime: '08:00:00'
+                    scrollTime: '08:00:00',
+                    eventDrop: handleEventDrop
                 }}
             />
         </div>

@@ -25,11 +25,11 @@ export const eventApi = {
         if (eventData.end && (eventData.type === 'arrangement')) {
             payload.end = new Date(eventData.end).toISOString();
         }
-        
+
         if (eventData.location && eventData.type === 'arrangement') {
             payload.location = eventData.location;
         }
-        
+
         if (eventData.recurrence && eventData.recurrence !== '') {
             payload.rrule = eventData.recurrence;
         }

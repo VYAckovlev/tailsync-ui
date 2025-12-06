@@ -67,6 +67,10 @@ export const useEventCreation = () => {
                     transformed.color = '#fb8c00';
                 }
 
+                if (transformed.type === 'holiday') {
+                    transformed.editable = false;
+                }
+
                 if (event.color && !event.backgroundColor) {
                     transformed.backgroundColor = event.color;
                 }
@@ -205,6 +209,32 @@ export const useEventCreation = () => {
         }
     };
 
+    const handleEventDrop = async (info) => {
+        const { event, revert } = info;
+        const updatedEvent = {
+            start: event.start.toISOString(),
+            end: event.end ? event.end.toISOString() : null,
+            allDay: event.allDay,
+            title: event.title,
+            color: event.backgroundColor,
+            calendar: event.extendedProps?.calendar_id,
+            type: event.extendedProps?.type,
+            description: event.extendedProps?.description,
+            location: event.extendedProps?.location,
+            recurrence: event.extendedProps?.rrule,
+        };
+
+        try {
+            await eventApi.updateEvent(event.id, updatedEvent);
+            toast.success('Event updated successfully');
+            setShouldRefreshEvents(prev => prev + 1);
+        } catch (error) {
+            revert();
+            console.error('Failed to update event:', error);
+            toast.error('Failed to update event');
+        }
+    }
+
     const closeEventPopover = () => {
         setIsEventPopoverOpen(false);
     };
@@ -240,6 +270,7 @@ export const useEventCreation = () => {
         openEventDetails,
         handleEventUpdate,
         handleEventDelete,
+        handleEventDrop,
         closeEventDetailsPopover,
     };
 };

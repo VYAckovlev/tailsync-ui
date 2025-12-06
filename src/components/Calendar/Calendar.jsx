@@ -19,7 +19,10 @@ const Calendar = React.forwardRef(({
     const defaultOptions = {
         plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin, multiMonthPlugin],
         headerToolbar: false,
+        resizable: false,
         editable: true,
+        eventStartEditable: true,
+        eventDurationEditable: false,
         selectable: true,
         dayMaxEvents: true,
         height: "100%",
