@@ -11,7 +11,7 @@ import { useCalendar } from "../../context/CalendarContext.jsx";
 import { calendarApi } from '../../services/calendarApi.js';
 
 const CalendarItem = ({ calendar, isOwner }) => {
-    const { refreshCalendars } = useCalendar();
+    const { refreshCalendars, toggleCalendarVisibility } = useCalendar();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
     const [isAddUserPopoverOpen, setIsAddUserPopoverOpen] = useState(false);
@@ -125,7 +125,8 @@ const CalendarItem = ({ calendar, isOwner }) => {
             <label className="calendar-label">
                 <input
                     type="checkbox"
-                    defaultChecked={calendar.visible}
+                    checked={calendar.visible}
+                    onChange={() => toggleCalendarVisibility(calendar.id)}
                     className="hidden-checkbox"
                 />
 
@@ -136,13 +137,15 @@ const CalendarItem = ({ calendar, isOwner }) => {
                 <span className="calendar-name">{calendar.name}</span>
             </label>
 
-            <button
-                ref={buttonRef}
-                className={`calendar-menu-btn ${isMenuOpen ? 'active' : ''}`}
-                onClick={handleMenuClick}
-            >
-                <ThreeDotsIcon />
-            </button>
+            {calendar.id !== 'holidays' && (
+                <button
+                    ref={buttonRef}
+                    className={`calendar-menu-btn ${isMenuOpen ? 'active' : ''}`}
+                    onClick={handleMenuClick}
+                >
+                    <ThreeDotsIcon />
+                </button>
+            )}
 
             {isMenuOpen && createPortal(
                 <div

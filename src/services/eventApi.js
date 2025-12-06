@@ -3,7 +3,7 @@ import { apiClient } from "./api.js";
 const EVENT_ENDPOINTS = {
     CREATE: '/events',
     GET_ALL: '/events',
-    GET_BY_CALENDAR: '/calendar/:calendarId/events/:type/:year/:month',
+    GET_BY_CALENDAR: '/calendars/:calendarId/events/:type/:year/:month',
     UPDATE: '/events/:id',
     DELETE: '/events/:id'
 }

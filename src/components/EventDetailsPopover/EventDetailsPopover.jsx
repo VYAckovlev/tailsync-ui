@@ -174,7 +174,7 @@ const EventDetailsPopover = ({
                     return (
                         <select {...commonProps} disabled={!calendars?.length}>
                             <option value="" disabled>{field.placeholder}</option>
-                            {calendars?.map(c => (
+                            {calendars?.filter(c => c.id !== 'holidays').map(c => (
                                 <option key={c.id} value={c.id}>{c.name}</option>
                             ))}
                         </select>
@@ -198,6 +198,8 @@ const EventDetailsPopover = ({
                 return (
                     <input
                         type="color"
+                        id={`event-${field.name}`}
+                        name={field.name}
                         className="custom-color-input"
                         value={formData[field.name] || config.color}
                         onChange={handleChange}

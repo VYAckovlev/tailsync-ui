@@ -40,6 +40,15 @@
     opacity: 0.6;
 }
 
+.custom-event-content.completed .event-time {
+    text-decoration: line-through;
+    opacity: 0.6;
+}
+
+.custom-event-content.completed .event-type-icon {
+    opacity: 0.4;
+}
+
 .event-edit-button {
     position: absolute;
     top: 2px;
@@ -73,7 +82,6 @@
     display: flex;
 }
 
-/* Badge styles for multi-day event continuations */
 .event-badge {
     position: relative;
     width: 100%;
@@ -112,4 +120,13 @@
 .event-badge:hover .badge-indicator {
     transform: scale(1.2);
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+.event-badge.completed .badge-title {
+    text-decoration: line-through;
+    opacity: 0.7;
+}
+
+.event-badge.completed .badge-indicator {
+    opacity: 0.5;
 }

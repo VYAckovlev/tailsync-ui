@@ -67,7 +67,10 @@ const EventPopover = ({ isOpen, onClose, onSubmit, anchorPosition, eventType, in
 
     useEffect(() => {
         if (calendars.length > 0 && !formData.calendarId) {
-            setFormData(prev => ({ ...prev, calendarId: calendars[0].id }));
+            const nonHolidayCalendars = calendars.filter(c => c.id !== 'holidays');
+            if (nonHolidayCalendars.length > 0) {
+                setFormData(prev => ({ ...prev, calendarId: nonHolidayCalendars[0].id }));
+            }
         }
     }, [calendars, formData.calendarId, isOpen]);
 
@@ -151,7 +154,7 @@ const EventPopover = ({ isOpen, onClose, onSubmit, anchorPosition, eventType, in
                     return (
                         <select {...commonProps} disabled={isLoadingCalendars}>
                             <option value="" disabled>{isLoadingCalendars ? 'Loading...' : field.placeholder}</option>
-                            {calendars.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                            {calendars.filter(c => c.id !== 'holidays').map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                         </select>
                     );
                 }
@@ -168,7 +171,16 @@ const EventPopover = ({ isOpen, onClose, onSubmit, anchorPosition, eventType, in
                 return <textarea {...commonProps} placeholder={field.placeholder} rows={3} maxLength={500} />;
 
             case 'color':
-                return <input type="color" {...commonProps} className="custom-color-input" />;
+                return (
+                    <input
+                        type="color"
+                        id={commonProps.id}
+                        name={commonProps.name}
+                        className="custom-color-input"
+                        value={formData[field.name] || config.color}
+                        onChange={handleChange}
+                    />
+                );
 
             default:
                 return null;

@@ -117,7 +117,18 @@ export const useEventCreation = () => {
                     transformed.recurrence = event.rrule;
                 }
 
-                if (event.type === 'holiday' && !event.color) {
+                // Normalize event type to lowercase
+                if (event.type) {
+                    transformed.type = event.type.toLowerCase();
+                }
+
+                // Generate unique ID for holidays without an ID
+                if (transformed.type === 'holiday' && (!event.id || event.id === '')) {
+                    const sanitizedTitle = event.title?.toLowerCase().replace(/[^a-z0-9]/g, '-') || 'holiday';
+                    transformed.id = `holiday-${event.start}-${sanitizedTitle}`;
+                }
+
+                if (transformed.type === 'holiday' && !event.color) {
                     transformed.color = '#fb8c00';
                 }
 
@@ -193,6 +204,11 @@ export const useEventCreation = () => {
         const event = info.event;
         const eventType = event.extendedProps?.type || 'arrangement';
         const meetingLink = event.extendedProps?.link;
+
+        // Prevent editing holiday events
+        if (eventType === 'holiday') {
+            return;
+        }
 
         if (eventType === 'arrangement' && meetingLink) {
             window.open(meetingLink, '_blank');

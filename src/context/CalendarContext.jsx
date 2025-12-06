@@ -68,6 +68,16 @@ export const CalendarProvider = ({ children }) => {
         }
     }, [user, transformCalendar]);
 
+    const toggleCalendarVisibility = useCallback((calendarId) => {
+        setCalendars(prevCalendars =>
+            prevCalendars.map(cal =>
+                cal.id === calendarId
+                    ? { ...cal, visible: !cal.visible }
+                    : cal
+            )
+        );
+    }, []);
+
     const myCalendars = useMemo(() => {
         const owned = calendars.filter(cal => cal.isOwner === true);
         return owned.sort((a, b) => {
@@ -91,8 +101,9 @@ export const CalendarProvider = ({ children }) => {
         isLoading,
         updateDate,
         registerCalendarRef,
-        refreshCalendars
-    }), [currentDate, calendarRef, calendars, myCalendars, otherCalendars, isLoading, updateDate, registerCalendarRef, refreshCalendars]);
+        refreshCalendars,
+        toggleCalendarVisibility
+    }), [currentDate, calendarRef, calendars, myCalendars, otherCalendars, isLoading, updateDate, registerCalendarRef, refreshCalendars, toggleCalendarVisibility]);
 
     return (
         <CalendarContext.Provider value={value}>

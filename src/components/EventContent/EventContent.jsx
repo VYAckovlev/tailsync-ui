@@ -34,12 +34,13 @@ const EventContent = ({ eventInfo, onEditClick }) => {
     };
 
     if (!isStartDay && isDayGridView) {
+        const isHoliday = eventType === 'holiday';
         return (
             <div
-                className="event-badge"
-                title={`${eventInfo.event.title} (click to edit)`}
-                onClick={handleEditClick}
-                style={{ cursor: 'pointer', width: '100%', height: '100%' }}
+                className={`event-badge ${eventType === 'task' && isCompleted ? 'completed' : ''}`}
+                title={isHoliday ? eventInfo.event.title : `${eventInfo.event.title} (click to edit)`}
+                onClick={isHoliday ? undefined : handleEditClick}
+                style={{ cursor: isHoliday ? 'default' : 'pointer', width: '100%', height: '100%' }}
             >
                 <div className="badge-indicator" />
                 <span className="badge-title">{eventInfo.event.title}</span>
@@ -58,13 +59,15 @@ const EventContent = ({ eventInfo, onEditClick }) => {
                     {eventInfo.event.title}
                 </div>
             </div>
-            <button
-                className="event-edit-button"
-                onClick={handleEditClick}
-                title="Edit event"
-            >
-                <ThreeDotsIcon />
-            </button>
+            {eventType !== 'holiday' && (
+                <button
+                    className="event-edit-button"
+                    onClick={handleEditClick}
+                    title="Edit event"
+                >
+                    <ThreeDotsIcon />
+                </button>
+            )}
         </div>
     );
 };
