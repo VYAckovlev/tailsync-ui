@@ -234,3 +234,34 @@
     border: none;
     border-radius: 12px;
 }
+
+.form-popover .popover-body {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    max-height: 60vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: var(--tailsync-orange-start) rgba(255, 255, 255, 0.1);
+}
+
+.form-popover .popover-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.form-popover .popover-body::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+.form-popover .popover-body::-webkit-scrollbar-thumb {
+    background: var(--tailsync-orange-start);
+    border-radius: 4px;
+}
+
+.form-popover .popover-body::-webkit-scrollbar-thumb:hover {
+    background: var(--tailsync-orange-end);
+}
