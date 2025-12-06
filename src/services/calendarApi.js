@@ -6,7 +6,8 @@ const CALENDAR_ENDPOINTS = {
     UPDATE: '/calendars/:id',
     DELETE: '/calendars/:id',
     SHARE: '/calendars/:id/share',
-    LEAVE: '/calendars/:id/leave'
+    LEAVE: '/calendars/:id/leave',
+    JOIN: '/calendars/join/:token'
 };
 
 export const calendarApi = {
@@ -56,5 +57,17 @@ export const calendarApi = {
             CALENDAR_ENDPOINTS.LEAVE.replace(':id', id)
         );
         return response.data;
+    },
+
+    async joinByToken(token) {
+        try {
+            const response = await apiClient.post(
+                CALENDAR_ENDPOINTS.JOIN.replace(':token', token)
+            );
+            return response.data;
+        } catch (error) {
+            console.error('Error joining calendar:', error);
+            throw error;
+        }
     }
 };

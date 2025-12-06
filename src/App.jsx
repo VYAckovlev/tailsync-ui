@@ -14,6 +14,7 @@ import CalendarYear from "./pages/Calendar/Year/CalendarYear.jsx";
 import CalendarWeek from "./pages/Calendar/Week/CalendarWeek.jsx";
 import CalendarDay from "./pages/Calendar/Day/CalendarDay.jsx";
 import ProtectedRoute from "./components/ProtectedRout/ProtectedRoute.jsx";
+import JoinCalendar from "./pages/JoinCalendar/JoinCalendar.jsx";
 
 function App() {
     return (
@@ -41,6 +42,14 @@ function App() {
                         <Route path="password-reset" element={<PasswordReset />} />
                         <Route path="password-reset/:token" element={<PasswordResetConfirm />} />
                     </Route>
+                    <Route
+                        path="/calendars/join/:token"
+                        element={
+                            <ProtectedRoute>
+                                <JoinCalendar />
+                            </ProtectedRoute>
+                        }
+                    />
                     <Route path="*" element={<Navigate to="/auth/login" replace />} />
                     <Route path="/tailsync"
                            element={
