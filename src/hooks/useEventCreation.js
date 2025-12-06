@@ -23,69 +23,6 @@ export const useEventCreation = () => {
         fetchEvents();
     }, [shouldRefreshEvents, calendars, currentYear, currentMonth]);
 
-    // const fetchEvents = async () => {
-    //     try {
-    //         const visibleCalendars = calendars.filter(cal => cal.visible);
-    //
-    //         if (visibleCalendars.length === 0) {
-    //             setEvents([]);
-    //             return;
-    //         }
-    //
-    //         const response = await eventApi.getAllEvents();
-    //         const allEvents = response.data?.events || [];
-    //
-    //         const visibleCalendarIds = visibleCalendars.map(cal => cal.id);
-    //         const filteredEvents = allEvents.filter(event =>
-    //             visibleCalendarIds.includes(event.calendar)
-    //         );
-    //
-    //         const transformedEvents = filteredEvents.map(event => {
-    //             const eventType = event.type?.toLowerCase() || 'arrangement';
-    //
-    //             let color = event.color;
-    //
-    //             if (eventType === 'holiday' && !color) {
-    //                 color = '#fb8c00';
-    //             }
-    //
-    //             if (!color) {
-    //                 const defaultColors = {
-    //                     'arrangement': '#2563eb',
-    //                     'reminder': '#9333ea',
-    //                     'task': '#16a34a',
-    //                     'holiday': '#fb8c00'
-    //                 };
-    //                 color = defaultColors[eventType] || '#6b7280';
-    //             }
-    //
-    //             return {
-    //                 id: event.id,
-    //                 title: event.title,
-    //                 start: event.start,
-    //                 end: event.end,
-    //                 allDay: event.allDay,
-    //                 backgroundColor: color,
-    //                 extendedProps: {
-    //                     type: eventType,
-    //                     calendar: event.calendar,
-    //                     calendar_id: event.calendar,
-    //                     description: event.description,
-    //                     location: event.location,
-    //                     link: event.link,
-    //                     completed: event.completed,
-    //                     rrule: event.rrule,
-    //                     recurrence: event.rrule,
-    //                     color: color
-    //                 }
-    //             };
-    //         });
-    //         setEvents(transformedEvents);
-    //     } catch (error) {
-    //         console.error('Failed to fetch events:', error);
-    //         setEvents([]);
-    //     }
-    // };
     const fetchEvents = async () => {
         try {
             const visibleCalendars = calendars.filter(cal => cal.visible);
@@ -96,7 +33,7 @@ export const useEventCreation = () => {
             }
 
             const eventPromises = visibleCalendars.map(calendar =>
-                eventApi.getEventsByCalendar(calendar.id, 'all', currentYear, currentMonth)
+                eventApi.getEventsByCalendar(calendar.id, 'all', currentYear)
                     .catch(error => {
                         console.error(`Failed to fetch events for calendar ${calendar.id}:`, error);
                         return { data: { events: [] } };
@@ -117,12 +54,10 @@ export const useEventCreation = () => {
                     transformed.recurrence = event.rrule;
                 }
 
-                // Normalize event type to lowercase
                 if (event.type) {
                     transformed.type = event.type.toLowerCase();
                 }
 
-                // Generate unique ID for holidays without an ID
                 if (transformed.type === 'holiday' && (!event.id || event.id === '')) {
                     const sanitizedTitle = event.title?.toLowerCase().replace(/[^a-z0-9]/g, '-') || 'holiday';
                     transformed.id = `holiday-${event.start}-${sanitizedTitle}`;
@@ -205,7 +140,6 @@ export const useEventCreation = () => {
         const eventType = event.extendedProps?.type || 'arrangement';
         const meetingLink = event.extendedProps?.link;
 
-        // Prevent editing holiday events
         if (eventType === 'holiday') {
             return;
         }

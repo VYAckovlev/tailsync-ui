@@ -3,7 +3,7 @@ import { apiClient } from "./api.js";
 const EVENT_ENDPOINTS = {
     CREATE: '/events',
     GET_ALL: '/events',
-    GET_BY_CALENDAR: '/calendars/:calendarId/events/:type/:year/:month',
+    GET_BY_CALENDAR: '/calendars/:calendarId/events/:type/:year',
     UPDATE: '/events/:id',
     DELETE: '/events/:id'
 }
@@ -19,11 +19,11 @@ export const eventApi = {
         };
 
         if (eventData.start) {
-            payload.start = eventData.start;
+            payload.start = new Date(eventData.start).toISOString();
         }
-        
+
         if (eventData.end && (eventData.type === 'arrangement')) {
-            payload.end = eventData.end;
+            payload.end = new Date(eventData.end).toISOString();
         }
         
         if (eventData.location && eventData.type === 'arrangement') {
@@ -43,19 +43,11 @@ export const eventApi = {
         return response.data;
     },
 
-    async getEventsByCalendar(calendarId, type, year, month) {
+    async getEventsByCalendar(calendarId, type, year) {
         let endpoint = EVENT_ENDPOINTS.GET_BY_CALENDAR
             .replace(':calendarId', calendarId)
-            .replace(':type', type);
-        
-        if (year && month) {
-            endpoint = endpoint
-                .replace(':year', year)
-                .replace(':month', month);
-        } else {
-            endpoint = endpoint
-                .replace('/:year/:month', '');
-        }
+            .replace(':type', type)
+            .replace(':year', year);
 
         const response = await apiClient.get(endpoint);
         return response.data;
@@ -71,11 +63,11 @@ export const eventApi = {
         };
 
         if (eventData.start) {
-            payload.start = eventData.start;
+            payload.start = new Date(eventData.start).toISOString();
         }
 
         if (eventData.end && (eventData.type === 'arrangement' || eventData.type === 'holiday')) {
-            payload.end = eventData.end;
+            payload.end = new Date(eventData.end).toISOString();
         }
 
         if (eventData.location && eventData.type === 'arrangement') {
