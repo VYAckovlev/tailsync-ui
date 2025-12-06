@@ -142,7 +142,7 @@ export const useEventCreation = () => {
     const handleEventClick = (info) => {
         const event = info.event;
         const eventType = event.extendedProps?.type || 'arrangement';
-        const meetingLink = event.extendedProps?.link;
+        const meetingLink = event.extendedProps?.location;
 
         if (eventType === 'holiday') {
             return;
