@@ -1,6 +1,6 @@
 import {useState, useRef, useEffect} from 'react';
 import {useUser} from "../../hooks/useUser.js";
-import {useAuth} from "../../hooks/useAuth.js";
+import { useAuth } from "../../context/AuthContext.jsx";
 import Modal from "../Modal/Modal.jsx";
 import {getUserInitials} from "../../utils/UserUtils.js";
 import toast from "react-hot-toast";

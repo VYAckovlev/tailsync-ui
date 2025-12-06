@@ -1,0 +1,41 @@
+.form-popover .form-field.color-field-row {
+    flex-direction: row !important;
+    align-items: center;
+    gap: 12px;
+    margin-top: 4px;
+}
+
+.form-popover .form-field.color-field-row label {
+    margin: 0;
+    cursor: pointer;
+}
+
+.form-popover .form-field.color-field-row input[type="color"] {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50%;
+    padding: 2px;
+    background: transparent;
+    border: 2px solid #000000;
+    flex-shrink: 0;
+    cursor: pointer;
+    box-shadow: none;
+    outline: none;
+}
+
+.form-popover .form-field.color-field-row input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+.form-popover .form-field.color-field-row input[type="color"]::-webkit-color-swatch {
+    border: none;
+    border-radius: 50%;
+}
+
+.form-popover .form-field.color-field-row input[type="color"]:hover,
+.form-popover .form-field.color-field-row input[type="color"]:focus,
+.form-popover .form-field.color-field-row input[type="color"]:active {
+    border-color: #000000;
+    box-shadow: none;
+    transform: none;
+}

@@ -1,0 +1,152 @@
+.calendar-item {
+    position: relative;
+    margin-bottom: 2px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.calendar-item:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.calendar-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px;
+    cursor: pointer;
+    user-select: none;
+    width: 100%;
+}
+
+.hidden-checkbox {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.custom-checkbox {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 2px solid var(--calendar-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    flex-shrink: 0;
+    background-color: transparent;
+}
+
+.custom-checkbox svg {
+    width: 12px;
+    height: 12px;
+    stroke: white;
+    opacity: 0;
+    transform: scale(0.5);
+    transition: all 0.2s ease;
+}
+
+.hidden-checkbox:checked + .custom-checkbox {
+    background-color: var(--calendar-color);
+}
+
+.hidden-checkbox:checked + .custom-checkbox svg {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.calendar-name {
+    font-size: 0.95rem;
+    font-family: var(--font-family-base);
+    color: rgba(255, 255, 255, 0.9);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: opacity 0.2s;
+}
+
+.calendar-item:hover .calendar-name {
+    color: #ffffff;
+}
+
+/* Three-dot menu button */
+.calendar-menu-btn {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    padding: 4px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    z-index: 2;
+}
+
+.calendar-item:hover .calendar-menu-btn,
+.calendar-menu-btn.active {
+    display: flex;
+    opacity: 1;
+}
+
+.calendar-menu-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.calendar-menu-dropdown {
+    background: rgba(21, 35, 70, 0.95);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 122, 24, 0.3);
+    border-radius: 8px;
+    padding: 0.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.2s ease;
+    z-index: 100;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    min-width: 160px;
+    animation: fadeIn 0.15s ease-out;
+}
+
+.calendar-menu-dropdown.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.calendar-menu-item {
+    padding: 0.5rem 0.75rem;
+    background: transparent;
+    border: none;
+    color: rgba(241, 245, 255, 0.9);
+    text-align: left;
+    font-family: var(--font-family-base);
+    font-size: 0.875rem;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background 0.2s ease;
+    white-space: nowrap;
+}
+
+.calendar-menu-item:hover {
+    background: rgba(255, 122, 24, 0.15);
+    color: white;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}

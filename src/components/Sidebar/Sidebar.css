@@ -9,6 +9,7 @@
     border-right: 2px solid rgba(255, 122, 24, 0.3);
     padding: 1.5rem 1rem;
     overflow-y: auto;
+    overflow-x: hidden;
     z-index: 500;
     box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
 }
@@ -67,7 +68,6 @@
     transform: rotate(90deg);
 }
 
-/* --- Випадаюче меню Create --- */
 .create-dropdown {
     position: absolute;
     top: calc(100% + 8px);
@@ -113,19 +113,17 @@
     color: white;
 }
 
-/* --- Розділювач --- */
 .sidebar-divider {
     height: 1px;
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
     margin: 1rem 0;
 }
 
-/* --- Групи календарів (My Calendars / Other) --- */
 .calendars-container {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    overflow-y: auto; /* Якщо календарів багато, з'явиться скрол */
+    overflow-y: auto;
 }
 
 .calendar-group {
@@ -133,11 +131,18 @@
     flex-direction: column;
 }
 
+.group-header-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+}
+
 .group-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 100%;
+    flex: 1;
     padding: 0.5rem 1rem;
     background: transparent;
     border: none;
@@ -148,6 +153,24 @@
 
 .group-header:hover {
     color: var(--tailsync-cream);
+}
+
+.group-plus-btn {
+    background: transparent;
+    border: none;
+    color: rgba(255, 122, 24, 0.7);
+    cursor: pointer;
+    padding: 4px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    transition: all var(--transition-fast);
+}
+
+.group-plus-btn:hover {
+    background: rgba(255, 122, 24, 0.15);
+    color: rgba(255, 122, 24, 1);
 }
 
 .group-title {
@@ -177,12 +200,10 @@
     grid-template-rows: 1fr;
 }
 
-/* Внутрішній контейнер для анімації висоти */
 .group-content > div {
     min-height: 0;
 }
 
-/* Тимчасові стилі для TODO елементів */
 .todo-item {
     padding: 0.5rem 1rem 0.5rem 2rem;
     font-size: 0.85rem;

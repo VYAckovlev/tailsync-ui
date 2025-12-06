@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import './Modal.css';
+import CloseIcon from "../../shared/icons/Close.icon.jsx";
 
 const Modal = ({ isOpen, onClose, title, children }) => {
     useEffect(() => {
@@ -29,7 +30,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
                 <div className="modal-header">
                     <h2>{title}</h2>
                     <button className="modal-close" onClick={onClose}>
-                        ×
+                        <CloseIcon />
                     </button>
                 </div>
                 <div className="modal-body">

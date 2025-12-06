@@ -1,11 +1,11 @@
 import React from 'react';
-import { useAuth } from '../../hooks/useAuth';
+import { useRegister } from "../../hooks/useAuth.js";
 import AuthForm from '../../components/AuthForm/AuthForm';
 import toast from "react-hot-toast";
 import { registerConfig, formValidators } from '../../shared/constants/form';
 
 const Register = () => {
-  const { register, loading } = useAuth();
+  const { register, isLoading, error } = useRegister();
 
   const onSubmit = async (data) => {
       const validation = formValidators.validatePasswordMatch(data.password, data.confirm_password);
@@ -28,7 +28,7 @@ const Register = () => {
     <AuthForm
       fields={registerConfig.fields}
       onSubmit={onSubmit}
-      submitButtonText={loading ? registerConfig.loadingText : registerConfig.submitButtonText}
+      submitButtonText={isLoading ? registerConfig.loadingText : registerConfig.submitButtonText}
       switchLink={{
         text: "Already have an account?",
         linkText: "Sign in",

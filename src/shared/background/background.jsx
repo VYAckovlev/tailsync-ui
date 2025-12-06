@@ -1,9 +1,9 @@
 import React from 'react'
 import './background.css'
 
-const Background = ({ children }) => {
+const Background = ({ children, centered = true }) => {
     return (
-        <div className="app-background">
+        <div className={`app-background ${centered ? 'centered' : 'stretch'}`}>
             {children}
         </div>
     );

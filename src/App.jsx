@@ -9,6 +9,12 @@ import PasswordReset from './pages/PasswordReset/PasswordReset';
 import PasswordResetConfirm from './pages/PasswordReset/PasswordResetConfirm';
 import { Toaster } from 'react-hot-toast';
 import MainLayout from "./layouts/Main/MainLayout.jsx";
+import CalendarMonth from "./pages/Calendar/Month/CalendarMonth.jsx";
+import CalendarYear from "./pages/Calendar/Year/CalendarYear.jsx";
+import CalendarWeek from "./pages/Calendar/Week/CalendarWeek.jsx";
+import CalendarDay from "./pages/Calendar/Day/CalendarDay.jsx";
+import ProtectedRoute from "./components/ProtectedRout/ProtectedRoute.jsx";
+import JoinCalendar from "./pages/JoinCalendar/JoinCalendar.jsx";
 
 function App() {
     return (
@@ -18,7 +24,7 @@ function App() {
                 <Toaster
                     position="top-right"
                     toastOptions={{
-                        duration: 2500,
+                        duration: 1500,
                         style: {
                             background: '#1a2244',
                             color: '#fff',
@@ -36,10 +42,27 @@ function App() {
                         <Route path="password-reset" element={<PasswordReset />} />
                         <Route path="password-reset/:token" element={<PasswordResetConfirm />} />
                     </Route>
+                    <Route
+                        path="/calendars/join/:token"
+                        element={
+                            <ProtectedRoute>
+                                <JoinCalendar />
+                            </ProtectedRoute>
+                        }
+                    />
                     <Route path="*" element={<Navigate to="/auth/login" replace />} />
-                    <Route path="/tailsync" element={<MainLayout/>}>
-                        {/*<Route index element={<Calendar/>} />*/}
-                        {/*<Route path="calendar" element={<Calendar/>}></Route>*/}
+                    <Route path="/tailsync"
+                           element={
+                        <ProtectedRoute>
+                            <MainLayout/>
+                        </ProtectedRoute>
+                        }
+                    >
+                        <Route index element={<Navigate to="month" replace />} />
+                        <Route path="year" element={<CalendarYear />}/>
+                        <Route path="month" element={<CalendarMonth />} />
+                        <Route path="week" element={<CalendarWeek />} />
+                        <Route path="day" element={<CalendarDay />} />
                     </Route>
                 </Routes>
                 </UserProvider>
