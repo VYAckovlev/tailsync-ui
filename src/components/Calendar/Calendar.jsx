@@ -3,6 +3,7 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import rrulePlugin from '@fullcalendar/rrule';
 import './Calendar.css';
 import multiMonthPlugin from '@fullcalendar/multimonth';
 
@@ -17,7 +18,7 @@ const Calendar = React.forwardRef(({
                   }, ref) => {
 
     const defaultOptions = {
-        plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin, multiMonthPlugin],
+        plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin, multiMonthPlugin, rrulePlugin],
         headerToolbar: false,
         resizable: false,
         editable: true,
