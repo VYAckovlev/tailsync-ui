@@ -12,6 +12,21 @@ TailSync is a feature-rich calendar management system that allows users to:
 - **Event Recurrence**: Set up recurring events with flexible scheduling options
 - **User Authentication**: Secure login system with password reset functionality
 
+## Documentation
+
+For comprehensive documentation including detailed algorithms, system architecture, CBL stage progress, and technical implementation details, please see:
+
+**[Full Documentation](./docs/DOCUMENTATION.md)**
+
+The documentation includes:
+- Complete CBL (Challenge-Based Learning) stage progress
+- Detailed system architecture and design decisions
+- Algorithm descriptions with flowcharts
+- Technical implementation guides
+- API integration details
+- Component structure and data flow
+- Future roadmap and improvements
+
 ## Screenshots
 
 ### Calendar Month View
@@ -177,6 +192,9 @@ The application will be available at `http://localhost:5173`
 
 ```
 tailsync-ui/
+├── docs/               # Documentation
+│   ├── DOCUMENTATION.md    # Full project documentation
+│   └── screenshots/        # Application screenshots
 ├── public/             # Static assets
 ├── src/
 │   ├── components/     # Reusable UI components
@@ -193,6 +211,7 @@ tailsync-ui/
 ├── .env.example        # Example environment variables
 ├── Dockerfile          # Docker configuration
 ├── package.json        # Project dependencies
+├── README.md           # This file
 └── vite.config.js      # Vite configuration
 ```
 
