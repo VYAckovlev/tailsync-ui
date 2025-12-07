@@ -10,7 +10,6 @@
 6. [Data Flow & State Management](#data-flow--state-management)
 7. [Component Structure](#component-structure)
 8. [API Integration](#api-integration)
-9. [Future Improvements](#future-improvements)
 
 ---
 
