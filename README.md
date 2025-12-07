@@ -11,7 +11,6 @@ TailSync is a feature-rich calendar management system that allows users to:
 - **Collaborative Calendars**: Share calendars with other users and collaborate on events
 - **Event Recurrence**: Set up recurring events with flexible scheduling options
 - **User Authentication**: Secure login system with password reset functionality
-- **Responsive Design**: Beautiful, modern interface that works across all devices
 
 ## Screenshots
 
