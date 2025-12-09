@@ -31,7 +31,8 @@ const CalendarMonth = () => {
                 eventContent={renderEventContent}
                 onDatesSet={handleDatesSet}
                 extraOptions={{
-                    eventDrop: handleEventDrop
+                    eventDrop: handleEventDrop,
+                    showNonCurrentDates: false,
                 }}
             />
         </div>
