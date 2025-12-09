@@ -40,7 +40,9 @@ const AddUserPopover = ({ isOpen, onClose, onSubmit, anchorPosition, calendarNam
                         name="role"
                         onChange={handleChange}
                         value={formData.role}
+                        required
                     >
+                        <option value="" disabled selected>Select Role</option>
                         <option value="viewer">Viewer</option>
                         <option value="contributor">Contributor</option>
                     </select>

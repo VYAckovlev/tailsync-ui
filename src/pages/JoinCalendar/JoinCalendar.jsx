@@ -23,7 +23,7 @@ const JoinCalendar = () => {
                 navigate('/tailsync');
             } catch (error) {
                 console.error('Failed to join calendar:', error);
-                toast.error('Failed to join calendar. Please try again.');
+                toast.error(`Failed to join calendar: ${error.response.data.message}`);
                 navigate('/tailsync');
             } finally {
                 setIsProcessing(false);

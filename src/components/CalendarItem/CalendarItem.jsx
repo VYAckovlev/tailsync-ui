@@ -72,7 +72,7 @@ const CalendarItem = ({ calendar, isOwner }) => {
             await refreshCalendars();
         } catch (error) {
             console.error('Failed to delete calendar:', error);
-            toast.error('Failed to delete calendar');
+            toast.error(`Failed to delete calendar: ${error.response.data.message}`);
         }
     };
 
@@ -101,7 +101,7 @@ const CalendarItem = ({ calendar, isOwner }) => {
             setIsAddUserPopoverOpen(false);
         } catch (error) {
             console.error('Failed to share calendar:', error);
-            toast.error('Failed to share calendar. Feature may not be available yet.');
+            toast.error(`Failed to share calendar. ${error.response.data.message}`);
         }
     };
 

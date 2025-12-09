@@ -134,7 +134,7 @@ export const useEventCreation = () => {
             setShouldRefreshEvents(prev => prev + 1);
         } catch (error) {
             console.error('Failed to create event:', error);
-            toast.error('Failed to create event');
+            toast.error(`Failed to create event: ${error.response.data.message}`);
             throw error;
         }
     };
@@ -191,7 +191,7 @@ export const useEventCreation = () => {
             setShouldRefreshEvents(prev => prev + 1);
         } catch (error) {
             console.error('Failed to update event:', error);
-            toast.error('Failed to update event');
+            toast.error(`Failed to update event: ${error.response.data.message}`);
             throw error;
         }
     };
@@ -204,7 +204,7 @@ export const useEventCreation = () => {
             setShouldRefreshEvents(prev => prev + 1);
         } catch (error) {
             console.error('Failed to delete event:', error);
-            toast.error('Failed to delete event');
+            toast.error(`Failed to delete event: ${error.response.data.message}`);
             throw error;
         }
     };
