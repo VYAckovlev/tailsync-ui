@@ -18,6 +18,10 @@ export const eventApi = {
             description: eventData.description,
         };
 
+        if (eventData.isAllDay) {
+            eventData.start += "T00:00";
+        }
+
         if (eventData.start) {
             payload.start = new Date(eventData.start).toISOString();
         }
